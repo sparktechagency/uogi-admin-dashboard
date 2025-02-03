@@ -11,6 +11,7 @@ import EditProfile from "../../Pages/Profile/EditProfile";
 
 import SignIn from "../../Pages/Auth/SignIn";
 import UpdatePassword from "../../Pages/Auth/UpdatePassword";
+
 import OtpPage from "../../Pages/Auth/OtpPage";
 import SettingsChangePassword from "../Dashboard/settings/SettingsChangePassword";
 
@@ -49,7 +50,7 @@ const router = createBrowserRouter([
         element: <OtpPage />,
       },
       {
-        path: "/update-password",
+        path: "/reset-password",
         element: <UpdatePassword />,
       },
       {

@@ -4,15 +4,78 @@ import { Link, useNavigate } from "react-router-dom";
 import OTPInput from "react-otp-input";
 import { AllImages } from "../../../public/images/AllImages";
 import { HiArrowLeft } from "react-icons/hi";
+import {
+  useResendOtpMutation,
+  useVerifyOtpMutation,
+} from "../../Redux/api/authApi";
+import { toast } from "sonner";
 
 const OtpPage = () => {
   const [otp, setOtp] = useState("");
-
   const navigate = useNavigate();
 
-  const handleOTPSubmit = () => {
-    console.log("OTP:", otp);
-    navigate("/update-password");
+  const [verifyOtp] = useVerifyOtpMutation();
+  const [resendOtp] = useResendOtpMutation();
+
+  const handleOTPSubmit = async () => {
+    if (otp.length < 6) {
+      alert("Please fill in all OTP fields");
+      return;
+    }
+
+    const token = localStorage.getItem("otpToken");
+    if (!token) {
+      alert("Error!. Please start the reset process again.");
+      navigate("/forgot-password");
+      return;
+    }
+
+    try {
+      const data = { token, otp };
+      console.log("Success:", data);
+      const response = await verifyOtp(data).unwrap();
+      console.log("OTP verification response:", response);
+
+      if (response.success === true) {
+        localStorage.setItem(
+          "verifiedOtpToken",
+          response?.data?.forgetOtpMatchToken
+        );
+        toast.success("OTP verified successfully!");
+        navigate("/reset-password");
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      if (error.data?.message === "Invalid OTP") {
+        toast.error("Invalid OTP. Please try again.");
+      } else {
+        toast.error("Failed to verify OTP. Please try again.");
+      }
+    }
+  };
+
+  const handleResendOtp = async () => {
+    const email = localStorage.getItem("userEmail");
+    if (!email) {
+      toast.error("Email not found. Please start the reset process again.");
+      navigate("/forgot-password");
+      return;
+    }
+
+    const data = { email };
+    try {
+      const response = await resendOtp(data).unwrap();
+      if (response.success === true) {
+        toast.success("An OTP has been sent to your email!");
+      }
+    } catch (error) {
+      // console.error("Error sending reset code:", error);
+      if (error.data?.message === "User not found") {
+        toast.error("Incorrect Email.");
+      } else {
+        toast.error("Failed to resend OTP. Please try again.");
+      }
+    }
   };
 
   return (
@@ -43,7 +106,7 @@ const OtpPage = () => {
                       hover:border-base-color focus:bg-transparent focus:border-base-color rounded-lg mr-[10px] sm:mr-[20px] text-secondary-color"
                     value={otp}
                     onChange={setOtp}
-                    numInputs={4}
+                    numInputs={6}
                     renderInput={(props) => <input {...props} required />}
                   />
                 </div>
@@ -53,6 +116,7 @@ const OtpPage = () => {
                 <Link
                   href="/otp-verification"
                   className="!text-[#F66E10] !underline font-semibold"
+                  onClick={handleResendOtp}
                 >
                   Resend
                 </Link>
