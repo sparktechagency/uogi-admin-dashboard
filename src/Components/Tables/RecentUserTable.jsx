@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Table } from "antd";
+import dayjs from "dayjs";
 
 const RecentUserTable = ({ data, loading, pageSize = 0 }) => {
   const columns = [
@@ -8,6 +9,7 @@ const RecentUserTable = ({ data, loading, pageSize = 0 }) => {
       dataIndex: "id",
       key: "id",
       responsive: ["md"],
+      render: (_, __, index) => index + 1, // Serial number based on row index
     },
     {
       title: "Full Name",
@@ -15,30 +17,32 @@ const RecentUserTable = ({ data, loading, pageSize = 0 }) => {
       key: "fullName",
       render: (text, record) => (
         <div className="flex items-center">
-          <img
-            src={record.image}
-            alt={text}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: "50%",
-              marginRight: 10,
-            }}
-          />
+          {record?.image && (
+            <img
+              src={`http://10.0.70.35:8020/${record.image}`}
+              alt={text}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                marginRight: 10,
+              }}
+            />
+          )}
           <span>{text}</span>
         </div>
       ),
     },
-    {
-      title: "Category",
-      dataIndex: "serviceName",
-      key: "serviceName",
-    },
-    {
-      title: "Price",
-      dataIndex: "servicePrice",
-      key: "servicePrice",
-    },
+    // {
+    //   title: "Category",
+    //   dataIndex: "serviceName",
+    //   key: "serviceName",
+    // },
+    // {
+    //   title: "Price",
+    //   dataIndex: "servicePrice",
+    //   key: "servicePrice",
+    // },
     {
       title: "Email",
       dataIndex: "email",
@@ -46,8 +50,9 @@ const RecentUserTable = ({ data, loading, pageSize = 0 }) => {
     },
     {
       title: "Date",
-      dataIndex: "joiningDate",
+      dataIndex: "createdAt",
       key: "joiningDate",
+      render: (date) => (date ? dayjs(date).format("DD-MM-YYYY") : "-"),
     },
     {
       title: "Process",

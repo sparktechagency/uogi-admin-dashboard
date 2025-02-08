@@ -1,13 +1,12 @@
 /* eslint-disable react/prop-types */
 import { Button, Space, Table, Tooltip } from "antd";
+import dayjs from "dayjs";
 import { GoEye } from "react-icons/go";
-import { RiDeleteBin6Line } from "react-icons/ri";
 
 const UsersTable = ({
   data,
   loading,
   showCustomerViewModal,
-  showDeleteModal,
   pageSize = 0,
 }) => {
   const columns = [
@@ -16,6 +15,7 @@ const UsersTable = ({
       dataIndex: "id",
       key: "id",
       responsive: ["md"],
+      render: (_, __, index) => index + 1, // Serial number based on row index
     },
     {
       title: "Full Name",
@@ -23,16 +23,18 @@ const UsersTable = ({
       key: "fullName",
       render: (text, record) => (
         <div className="flex items-center">
-          <img
-            src={record.image}
-            alt={text}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: "50%",
-              marginRight: 10,
-            }}
-          />
+          {record?.image && (
+            <img
+              src={`http://10.0.70.35:8020/${record.image}`}
+              alt={text}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                marginRight: 10,
+              }}
+            />
+          )}
           <span>{text}</span>
         </div>
       ),
@@ -44,8 +46,9 @@ const UsersTable = ({
     },
     {
       title: "Joining date",
-      dataIndex: "joiningDate",
+      dataIndex: "createdAt",
       key: "joiningDate",
+      render: (date) => (date ? dayjs(date).format("DD-MM-YYYY") : "-"),
     },
 
     {
@@ -67,7 +70,7 @@ const UsersTable = ({
                 <GoEye style={{ fontSize: "24px" }} />
               </Button>
             </Tooltip>
-            <Tooltip placement="left" title="Delete this User">
+            {/* <Tooltip placement="left" title="Delete this User">
               <Button
                 className="!p-0"
                 style={{
@@ -79,7 +82,7 @@ const UsersTable = ({
               >
                 <RiDeleteBin6Line style={{ fontSize: "24px" }} />
               </Button>
-            </Tooltip>
+            </Tooltip> */}
           </Space>
         </>
       ),
