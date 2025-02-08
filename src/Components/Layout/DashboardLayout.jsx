@@ -11,7 +11,13 @@ import setting from "../../../public/images/dashboard-logo/setting.svg";
 import profile from "../../../public/images/dashboard-logo/profile.svg";
 import logout from "../../../public/images/dashboard-logo/logout.svg";
 
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { ConfigProvider, Layout, Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content, Header } from "antd/es/layout/layout";
@@ -22,6 +28,7 @@ const DashboardLayout = () => {
   const location = useLocation();
   const pathSegment = location.pathname.split("/").pop();
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
 
   // Use effect to handle screen resizing
   useEffect(() => {
@@ -41,6 +48,13 @@ const DashboardLayout = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+
+    navigate("/signin", { replace: true });
+  };
 
   const adminMenuItems = [
     {
@@ -137,7 +151,9 @@ const DashboardLayout = () => {
       ),
       label: (
         <div>
-          <NavLink to="/signin">Logout</NavLink>
+          <NavLink onClick={handleLogout} to="/signin">
+            Logout
+          </NavLink>
         </div>
       ),
     },
