@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -9,18 +10,27 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { useIncomeByDaysQuery } from "../../Redux/api/dashboardApi";
 
-const data = [
-  { name: "Mon", income: 70 },
-  { name: "Tue", income: 30 },
-  { name: "Wed", income: 100 },
-  { name: "Thu", income: 50 },
-  { name: "Fri", income: 80 },
-  { name: "Sat", income: 130 },
-  { name: "Sun", income: 50 },
-];
+const Area_Chart = ({ selectedDays }) => {
+  console.log(selectedDays);
+  const { data: incomeData, refetch } = useIncomeByDaysQuery(selectedDays);
+  console.log(incomeData);
 
-const Area_Chart = () => {
+  const [chartData, setChartData] = useState([]);
+
+  useEffect(() => {
+    if (incomeData) {
+      setChartData(incomeData?.data || []);
+    }
+  }, [incomeData]);
+
+  // console.log(chartData);
+
+  useEffect(() => {
+    refetch();
+  }, [selectedDays, refetch]);
+
   // Formatter function to add 'K' suffix to Y-axis values
   const yAxisTickFormatter = (value) => `${value}`;
 
@@ -31,7 +41,7 @@ const Area_Chart = () => {
     <div className="w-full h-80">
       <ResponsiveContainer>
         <AreaChart
-          data={data}
+          data={chartData}
           margin={{
             top: 20,
             right: 30,

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   BarChart,
   Bar,
@@ -7,28 +8,30 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useIncomeByYearQuery } from "../../Redux/api/dashboardApi";
+import { useEffect, useState } from "react";
 
-const data = [
-  { month: "Jan", income: 150 },
-  { month: "Feb", income: 70 },
-  { month: "Mar", income: 100 },
-  { month: "Apr", income: 80 },
-  { month: "May", income: 70 },
-  { month: "Jun", income: 100 },
-  { month: "Jul", income: 120 },
-  { month: "Aug", income: 150 },
-  { month: "Sep", income: 90 },
-  { month: "Oct", income: 70 },
-  { month: "Nov", income: 100 },
-  { month: "Dec", income: 120 },
-];
+const IncomeBarChart = ({ selectedYear }) => {
+  // console.log(selectedYear);
 
-const IncomeBarChart = () => {
+  const { data: incomeData, refetch } = useIncomeByYearQuery(selectedYear);
+  const [chartData, setChartData] = useState([]);
+
+  useEffect(() => {
+    if (incomeData) {
+      setChartData(incomeData?.data || []);
+    }
+  }, [incomeData]);
+
+  useEffect(() => {
+    refetch();
+  }, [selectedYear, refetch]);
+
   return (
     <div className="w-full ">
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
-          data={data}
+          data={chartData}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
         >
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
