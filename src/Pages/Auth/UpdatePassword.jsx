@@ -4,12 +4,47 @@ import { Link, useNavigate } from "react-router-dom";
 import { AllImages } from "../../../public/images/AllImages";
 import { HiArrowLeft } from "react-icons/hi";
 import { MdOutlineLock } from "react-icons/md";
+import { useResetPasswordMutation } from "../../Redux/api/authApi";
+import { toast } from "sonner";
 
-const ChangePassword = () => {
+const UpdatePassword = () => {
   const navigate = useNavigate();
-  const onFinish = (values) => {
-    console.log("Success:", values);
-    navigate("/signin");
+  const [resetPassword] = useResetPasswordMutation();
+
+  const onFinish = async (values) => {
+    try {
+      const data = {
+        newPassword: values.password,
+        confirmPassword: values.confirmPassword,
+      };
+      console.log("Request payload:", data);
+
+      const token = localStorage.getItem("verifiedOtpToken");
+      if (!token) {
+        toast.error("Session expired. Please start the reset process again.");
+        navigate("/forgot-password");
+        return;
+      }
+
+      const response = await resetPassword(data).unwrap();
+      console.log("Response:", response);
+
+      if (response.success) {
+        toast.success("Password updated successfully!");
+        navigate("/signin");
+      }
+    } catch (error) {
+      console.log("Error updating password:", error);
+      // if (error.response) {
+      //   console.error("Validation error details:", error.response.data);
+      //   toast.error(
+      //     error.response.data.message ||
+      //       "Failed to update password. Please try again."
+      //   );
+      // } else {
+      //   toast.error("An unexpected error occurred. Please try again.");
+      // }
+    }
   };
 
   return (
@@ -26,7 +61,7 @@ const ChangePassword = () => {
                 <Link to="/verify-otp">
                   <HiArrowLeft className="text-xl md:text-2xl lg:text-3xl" />
                 </Link>
-                <h1 className="text-xl md:text-2xl lg:text-3xl font-medium mb-2">
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-medium">
                   Set a new password
                 </h1>
               </div>
@@ -107,4 +142,4 @@ const ChangePassword = () => {
     </div>
   );
 };
-export default ChangePassword;
+export default UpdatePassword;

@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -9,25 +10,24 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { useIncomeByHourQuery } from "../../Redux/api/dashboardApi";
 
-const data = [
-  { name: "10AM", income: 70 },
-  { name: "11AM", income: 30 },
-  { name: "12AM", income: 100 },
-  { name: "1PM", income: 50 },
-  { name: "2PM", income: 80 },
-  { name: "3PM", income: 130 },
-  { name: "4PM", income: 70 },
-  { name: "5PM", income: 50 },
-  { name: "6PM", income: 80 },
-  { name: "7PM", income: 110 },
-  { name: "8PM", income: 130 },
-  { name: "9PM", income: 50 },
-];
+const HourArea_Chart = ({ selectedHour }) => {
+  // console.log(selectedHour);
+  const { data: incomeData, refetch } = useIncomeByHourQuery(selectedHour);
+  const [chartData, setChartData] = useState([]);
 
-const HourArea_Chart = () => {
-  // Formatter function to add 'K' suffix to Y-axis values
   const yAxisTickFormatter = (value) => `${value}`;
+
+  useEffect(() => {
+    if (incomeData) {
+      setChartData(incomeData.data);
+    }
+  }, [incomeData]);
+
+  useEffect(() => {
+    refetch();
+  }, [selectedHour, refetch]);
 
   // Custom tick style
   const tickStyle = { fill: "#222222" };
@@ -36,7 +36,7 @@ const HourArea_Chart = () => {
     <div className="w-full h-80">
       <ResponsiveContainer>
         <AreaChart
-          data={data}
+          data={chartData}
           margin={{
             top: 20,
             right: 30,

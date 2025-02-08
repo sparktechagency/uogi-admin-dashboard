@@ -10,10 +10,17 @@ import DeleteUserModal from "../UI/DeleteUserModal";
 import RecentUserTable from "../Tables/RecentUserTable";
 import HourArea_Chart from "../Chart/HourAreaChart";
 import IncomeBarChart from "../Chart/IncomeBarChart";
+import { useAllCustomerQuery } from "../../Redux/api/dashboardApi";
 
 const Dashboard = () => {
+  const { data: allCustomer } = useAllCustomerQuery();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedYear, setSelectedYear] = useState("2024");
+  const [selectedHour, setSelectedHour] = useState("24hour");
+  const [selectedDays, setSelectedDays] = useState("7day");
+
+  console.log(allCustomer?.data);
 
   //* It's Use to Show Modal
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
@@ -87,7 +94,7 @@ const Dashboard = () => {
                     Total customer
                   </p>
                   <p className="text-sm lg:text-base xl:text-3xl font-medium text-primary-color">
-                    12K
+                    {allCustomer?.data?.allCustomerCount}
                   </p>
                 </div>
               </div>
@@ -102,12 +109,14 @@ const Dashboard = () => {
                     Total Business
                   </p>
                   <p className="text-sm lg:text-base xl:text-3xl font-medium text-secondary-color">
-                    740
+                    {allCustomer?.data?.allBusinessCount}
                   </p>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* graphs */}
           <div className="mt-8 w-full">
             <div
               className="w-full p-3 bg-[#FFFFFF] rounded-lg border border-input-color"
@@ -127,6 +136,7 @@ const Dashboard = () => {
                     }}
                   >
                     <Select
+                      onChange={(value) => setSelectedYear(value)}
                       defaultValue="2024"
                       options={[
                         { value: "2024", label: "2024" },
@@ -138,10 +148,11 @@ const Dashboard = () => {
                 </div>
               </div>
               <div>
-                <IncomeBarChart />
+                <IncomeBarChart selectedYear={selectedYear} />
               </div>
             </div>
           </div>
+
           <div className="grid grid-cols-1 items-start lg:grid-cols-2 gap-5 mt-8 w-full">
             <div
               className="w-full p-3 bg-[#FFFFFF] rounded-lg border border-input-color"
@@ -161,16 +172,18 @@ const Dashboard = () => {
                     }}
                   >
                     <Select
+                      onChange={(value) => setSelectedDays(value)}
                       defaultValue="Last 7 days"
-                      options={[{ value: "7", label: "Last 7 days" }]}
+                      options={[{ value: "7day", label: "Last 7 days" }]}
                     />
                   </ConfigProvider>
                 </div>
               </div>
               <div>
-                <Area_Chart />
+                <Area_Chart selectedDays={selectedDays} />
               </div>
             </div>
+
             <div
               className="w-full p-3 bg-[#FFFFFF] rounded-lg border border-input-color"
               //
@@ -190,13 +203,18 @@ const Dashboard = () => {
                   >
                     <Select
                       defaultValue="Last 24 Hours"
-                      options={[{ value: "7", label: "Last 24 Hours" }]}
+                      onChange={(value) => setSelectedHour(value)}
+                      options={[
+                        { value: "24hour", label: "Last 24 Hours" },
+                        // { value: "12hour", label: "Last 12 Hours" },
+                        // { value: "6hour", label: "Last 6 Hours" },
+                      ]}
                     />
                   </ConfigProvider>
                 </div>
               </div>
               <div>
-                <HourArea_Chart />
+                <HourArea_Chart selectedHour={selectedHour} />
               </div>
             </div>
           </div>
