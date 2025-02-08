@@ -1,119 +1,43 @@
-import { useState } from "react";
-import { AllImages, AllServices } from "../../../../public/images/AllImages";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ConfigProvider, Select } from "antd";
-
-const services = [
-  {
-    _id: "001",
-    serviceName: "Brows and Lashes",
-    businessName: "",
-    owner: "Olivia Ema",
-    imageUrl: AllServices.service1,
-    price: "30",
-  },
-  {
-    _id: "002",
-    serviceName: "Manicure / pedicure",
-    businessName: "",
-    owner: "Sophia Ava",
-    imageUrl: AllServices.service2,
-    price: "25",
-  },
-  {
-    _id: "003",
-    serviceName: "Aesthetics",
-    businessName: "",
-    owner: "Emma Lily",
-    imageUrl: AllServices.service3,
-    price: "40",
-  },
-  {
-    _id: "004",
-    serviceName: "Waxing",
-    businessName: "",
-    owner: "Mia Sophia",
-    imageUrl: AllServices.service4,
-    price: "20",
-  },
-  {
-    _id: "005",
-    serviceName: "Hairdressers",
-    businessName: "",
-    owner: "Ava Harper",
-    imageUrl: AllServices.service5,
-    price: "35",
-  },
-  {
-    _id: "006",
-    serviceName: "Make up artists",
-    businessName: "",
-    owner: "Sophia Olivia",
-    imageUrl: AllServices.service6,
-    price: "50",
-  },
-  {
-    _id: "007",
-    serviceName: "Brows and Lashes",
-    businessName: "",
-    owner: "Lily Ava",
-    imageUrl: AllServices.service1,
-    price: "30",
-  },
-  {
-    _id: "008",
-    serviceName: "Manicure / pedicure",
-    businessName: "",
-    owner: "Isabella Mia",
-    imageUrl: AllServices.service2,
-    price: "25",
-  },
-  {
-    _id: "009",
-    serviceName: "Aesthetics",
-    businessName: "",
-    owner: "Harper Emma",
-    imageUrl: AllServices.service3,
-    price: "40",
-  },
-  {
-    _id: "010",
-    serviceName: "Waxing",
-    businessName: "",
-    owner: "Lily Olivia",
-    imageUrl: AllServices.service4,
-    price: "20",
-  },
-  {
-    _id: "011",
-    serviceName: "Hairdressers",
-    businessName: "",
-    owner: "Emma Ava",
-    imageUrl: AllServices.service5,
-    price: "35",
-  },
-  {
-    _id: "012",
-    serviceName: "Make up artists",
-    businessName: "",
-    owner: "Ava Mia",
-    imageUrl: AllServices.service6,
-    price: "50",
-  },
-];
+import { useAllServicesQuery } from "../../../Redux/api/serviceApi";
 
 const Services = () => {
+  const {
+    data: allServices,
+    isLoading: isFetching,
+    error: fetchError,
+  } = useAllServicesQuery();
+  const servicesData = allServices?.data?.result;
+  console.log(servicesData);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [uniqueCategories, setUniqueCategories] = useState([]);
 
-  // Get unique service names for dropdown options
-  const uniqueCategories = [
-    ...new Set(services.map((service) => service.serviceName)),
-  ];
+  useEffect(() => {
+    if (Array.isArray(servicesData) && servicesData.length > 0) {
+      // Calculate unique categories whenever services data changes
+      const uniqueCategories = [
+        ...new Set(servicesData.map((service) => service?.categoryName)),
+      ];
+
+      setUniqueCategories(uniqueCategories);
+    }
+  }, [servicesData]);
 
   // Filtered services based on selected category
   const filteredServices = selectedCategory
-    ? services.filter((service) => service.serviceName === selectedCategory)
-    : services;
+    ? servicesData.filter(
+        (service) => service.categoryName === selectedCategory
+      )
+    : servicesData;
+
+  if (isFetching) {
+    return <div>Loading...</div>;
+  }
+  if (fetchError) {
+    return <div>Error: {fetchError.message}</div>;
+  }
 
   return (
     <div className="min-h-[90vh]">
@@ -160,19 +84,20 @@ const Services = () => {
             {filteredServices.map((service, index) => (
               <Link
                 key={index}
-                to={`/services/${service._id}`}
+                to={`/services/${service?._id}`}
+                state={service}
                 className="hover:text-base-color"
               >
                 <div className="flex flex-col gap-2 bg-[#FEF2F5] border border-[#FEF2F5] px-4 py-3 rounded-md">
                   <div className="relative rounded-md">
                     <img
-                      src={service.imageUrl}
+                      src={`http://10.0.70.35:8020/${service?.serviceImage}`}
                       alt="service"
                       className="w-full h-[180px] sm:h-[220px] object-cover rounded-md"
                     />
                     <div className="w-full bg-[#18191B88] h-full absolute top-0 left-0 flex items-end rounded-md">
                       <h1 className="text-[#FFEBF1] text-xl md:text-3xl p-3">
-                        {service.serviceName}
+                        {service?.serviceName}
                       </h1>
                     </div>
                   </div>
@@ -180,14 +105,16 @@ const Services = () => {
                   <div>
                     <div className="flex items-center gap-2 mt-3">
                       <img
-                        src={AllImages.userImage}
+                        src={`http://10.0.70.35:8020/${service?.businessUserId?.image}`}
                         className="h-6 lg:h-8 w-6 lg:w-8 rounded-full"
                         alt="business"
                       />
-                      <h1 className="text-2xl font-medium">{service.owner}</h1>
+                      <h1 className="text-2xl font-medium">
+                        {service?.businessUserId?.fullName}
+                      </h1>
                     </div>
                     <p className="text-lg mt-1">
-                      Price: <span>£{service.price}</span>
+                      Price: <span>£{service?.servicePrice}</span>
                     </p>
                   </div>
                 </div>
