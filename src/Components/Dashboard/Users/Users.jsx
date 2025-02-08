@@ -1,19 +1,19 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 
 import { SearchOutlined } from "@ant-design/icons";
 import { Input } from "antd";
-import axios from "axios";
 import UsersTable from "../../Tables/UsersTable";
 import DeleteUserModal from "../../UI/DeleteUserModal";
 import ViewCustomerModal from "../../UI/ViewCustomerModal";
+import { useAllUsersQuery } from "../../../Redux/api/userApi";
 
 export default function AllUsers() {
+  // eslint-disable-next-line no-unused-vars
+  const { data: allUsers, loadingUser, refetch } = useAllUsersQuery();
+  const userData = allUsers?.data;
+  console.log(userData);
   //* Store Search Value
   const [searchText, setSearchText] = useState("");
-
-  //* Use to set user
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   //* It's Use to Show Customer Modal
   const [isViewCustomer, setIsViewCustomer] = useState(false);
@@ -24,34 +24,19 @@ export default function AllUsers() {
   //* It's Use to Set Seclected User to delete and view
   const [currentRecord, setCurrentRecord] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("/data/userData.json");
-
-        setData(response?.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   const filteredData = useMemo(() => {
-    if (!searchText) return data;
-    return data.filter((item) =>
+    if (!searchText) return userData;
+    return userData.filter((item) =>
       item.fullName.toLowerCase().includes(searchText.toLowerCase())
     );
-  }, [data, searchText]);
+  }, [userData, searchText]);
 
   const onSearch = (value) => {
     setSearchText(value);
   };
 
   const showCustomerViewModal = (record) => {
+    console.log(record);
     setCurrentRecord(record);
     setIsViewCustomer(true);
   };
@@ -102,7 +87,7 @@ export default function AllUsers() {
         <div className="px-2 lg:px-6">
           <UsersTable
             data={filteredData}
-            loading={loading}
+            loading={loadingUser}
             showCustomerViewModal={showCustomerViewModal}
             showDeleteModal={showDeleteModal}
             pageSize={12}

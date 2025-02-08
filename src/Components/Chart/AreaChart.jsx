@@ -13,9 +13,9 @@ import {
 import { useIncomeByDaysQuery } from "../../Redux/api/dashboardApi";
 
 const Area_Chart = ({ selectedDays }) => {
-  console.log(selectedDays);
+  // console.log(selectedDays);
   const { data: incomeData, refetch } = useIncomeByDaysQuery(selectedDays);
-  console.log(incomeData);
+  // console.log(incomeData);
 
   const [chartData, setChartData] = useState([]);
 

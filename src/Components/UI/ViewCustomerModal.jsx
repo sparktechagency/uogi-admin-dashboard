@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Modal } from "antd";
+import dayjs from "dayjs";
 
 const ViewCustomerModal = ({
   isViewCustomer,
@@ -25,11 +26,13 @@ const ViewCustomerModal = ({
         <div className="">
           <div className="flex justify-center items-center p-4 border-b">
             {/* Avatar */}
-            <img
-              src={currentRecord?.image}
-              alt={currentRecord?.fullName}
-              className="w-14 h-14 sm:w-20  sm:h-20 rounded-lg mr-4"
-            />
+            {currentRecord?.image && (
+              <img
+                src={`http://10.0.70.35:8020/${currentRecord.image}`}
+                alt={currentRecord?.fullName}
+                className="w-14 h-14 sm:w-20  sm:h-20 rounded-lg mr-4"
+              />
+            )}
             <div className="text-xl sm:text-3xl font-bold">
               {currentRecord?.fullName}
             </div>
@@ -37,30 +40,47 @@ const ViewCustomerModal = ({
 
           <div className="mt-5">
             <div className="grid lg:grid-cols-2 text-start gap-4 text-lg">
-              <div className="sm:flex gap-1">
-                <div className="font-bold">Service name:</div>
-                <div>{currentRecord?.serviceName}</div>
-              </div>
-              <div className="sm:flex gap-1">
-                <div className="font-bold">Email:</div>
-                <div>{currentRecord?.email}</div>
-              </div>
-              <div className="sm:flex gap-1">
-                <div className="font-bold">Service price:</div>
-                <div>{currentRecord?.servicePrice}</div>
-              </div>
-              <div className="sm:flex gap-1">
-                <div className="font-bold">Date of Birth:</div>
-                <div>{currentRecord?.dateOfBirth}</div>
-              </div>
-              <div className="sm:flex gap-1">
-                <div className="font-bold">Contact number:</div>
-                <div>{currentRecord?.contactNumber}</div>
-              </div>
-              <div className="sm:flex gap-1">
-                <div className="font-bold">Address:</div>
-                <div>{currentRecord?.address}</div>
-              </div>
+              {currentRecord?.serviceName && (
+                <div className="sm:flex gap-1">
+                  <div className="font-bold">Service name:</div>
+                  <div>{currentRecord?.serviceName}</div>
+                </div>
+              )}
+              {currentRecord?.email && (
+                <div className="sm:flex gap-1">
+                  <div className="font-bold">Email:</div>
+                  <div>{currentRecord?.email}</div>
+                </div>
+              )}
+              {currentRecord?.servicePrice && (
+                <div className="sm:flex gap-1">
+                  <div className="font-bold">Service price:</div>
+                  <div>{currentRecord?.servicePrice}</div>
+                </div>
+              )}
+
+              {currentRecord?.dateOfBirth && (
+                <div className="sm:flex gap-1">
+                  <div className="font-bold">Date of Birth:</div>
+                  <div>
+                    {currentRecord?.dateOfBirth
+                      ? dayjs(currentRecord?.dateOfBirth).format("DD-MM-YYYY")
+                      : "-"}
+                  </div>
+                </div>
+              )}
+              {currentRecord?.contactNumber && (
+                <div className="sm:flex gap-1">
+                  <div className="font-bold">Contact number:</div>
+                  <div>{currentRecord?.contactNumber}</div>
+                </div>
+              )}
+              {currentRecord?.address && (
+                <div className="sm:flex gap-1">
+                  <div className="font-bold">Contact number:</div>
+                  <div>{currentRecord?.address}</div>
+                </div>
+              )}
             </div>
           </div>
         </div>

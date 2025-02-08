@@ -3,24 +3,28 @@ import Area_Chart from "../Chart/AreaChart";
 import { Link } from "react-router-dom";
 
 import { AllIcons } from "../../../public/images/AllImages";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
+
 import ViewUserModal from "../UI/ViewCustomerModal";
 import DeleteUserModal from "../UI/DeleteUserModal";
 import RecentUserTable from "../Tables/RecentUserTable";
 import HourArea_Chart from "../Chart/HourAreaChart";
 import IncomeBarChart from "../Chart/IncomeBarChart";
 import { useAllCustomerQuery } from "../../Redux/api/dashboardApi";
+import { useAllUsersQuery } from "../../Redux/api/userApi";
 
 const Dashboard = () => {
   const { data: allCustomer } = useAllCustomerQuery();
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line no-unused-vars
+  const { data: allUsers, loadingUser, refetch } = useAllUsersQuery();
   const [selectedYear, setSelectedYear] = useState("2024");
   const [selectedHour, setSelectedHour] = useState("24hour");
   const [selectedDays, setSelectedDays] = useState("7day");
 
-  console.log(allCustomer?.data);
+  const userData = allUsers?.data;
+  console.log(userData);
+
+  // console.log(allCustomer?.data);
 
   //* It's Use to Show Modal
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
@@ -30,23 +34,6 @@ const Dashboard = () => {
 
   //* It's Use to Set Seclected User to delete and view
   const [currentRecord, setCurrentRecord] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("/data/userData.json");
-        const recentData = response.data?.slice(0, 5);
-
-        setData(recentData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const showViewModal = (record) => {
     setCurrentRecord(record);
@@ -223,7 +210,7 @@ const Dashboard = () => {
             <div className="bg-[#FFFFFF] rounded flex-1 p-3">
               <div className="flex justify-between items-center mx-3 py-2">
                 <p className="text-2xl font-semibold text-base-color">
-                  Recent Appointments
+                  Users
                 </p>
                 <div>
                   <Link to="/users">
@@ -234,8 +221,8 @@ const Dashboard = () => {
                 </div>
               </div>
               <RecentUserTable
-                data={data}
-                loading={loading}
+                data={userData}
+                loading={loadingUser}
                 showViewModal={showViewModal}
                 showDeleteModal={showDeleteModal}
               />
