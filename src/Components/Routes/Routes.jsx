@@ -29,6 +29,7 @@ import BusinessDetasils from "../Dashboard/Business/BusinessDetasils";
 import Deposit from "../Dashboard/Earning/Deposite";
 import Withdraw from "../Dashboard/Earning/Withdraw";
 import PolicyScreen from "../Dashboard/PolicyScreen/PolicyScreen";
+import Earning from "../Dashboard/Earning/Earning";
 
 //
 
@@ -84,6 +85,10 @@ const router = createBrowserRouter([
           {
             path: "services/:id",
             element: <ServiceDetails />,
+          },
+          {
+            path: "earning",
+            element: <Earning />,
           },
           {
             path: "deposit",

@@ -6,7 +6,7 @@ import user from "../../../public/images/dashboard-logo/user.svg";
 import business from "../../../public/images/dashboard-logo/business.svg";
 import service from "../../../public/images/dashboard-logo/beauty.svg";
 import income from "../../../public/images/dashboard-logo/income.svg";
-import policyScreen from "../../../public/images/dashboard-logo/policyScreen.svg";
+// import policyScreen from "../../../public/images/dashboard-logo/policyScreen.svg";
 import setting from "../../../public/images/dashboard-logo/setting.svg";
 import profile from "../../../public/images/dashboard-logo/profile.svg";
 import logout from "../../../public/images/dashboard-logo/logout.svg";
@@ -65,26 +65,31 @@ const DashboardLayout = () => {
     },
     {
       key: "earning",
-      label: <span className="text-base-color"> Earning</span>,
-      icon: <img src={income} alt="erning" width={16} height={16} />,
-      children: [
-        {
-          key: "deposit",
-          icon: <span>&#8226;</span>,
-          label: <NavLink to="deposit">Deposit</NavLink>,
-        },
-        {
-          key: "withdraw",
-          icon: <span>&#8226;</span>,
-          label: <NavLink to="withdraw">Withdraw</NavLink>,
-        },
-      ],
+      icon: <img src={income} alt="income" width={16} height={16} />,
+      label: <NavLink to="earning">Earning</NavLink>,
     },
-    {
-      key: "policy-screen",
-      icon: <img src={policyScreen} alt="dashboard" width={16} height={16} />,
-      label: <NavLink to="policy-screen">Policy Screen</NavLink>,
-    },
+    // {
+    //   key: "earning",
+    //   label: <span className="text-base-color"> Earning</span>,
+    //   icon: <img src={income} alt="erning" width={16} height={16} />,
+    //   children: [
+    //     {
+    //       key: "deposit",
+    //       icon: <span>&#8226;</span>,
+    //       label: <NavLink to="deposit">Deposit</NavLink>,
+    //     },
+    //     {
+    //       key: "withdraw",
+    //       icon: <span>&#8226;</span>,
+    //       label: <NavLink to="withdraw">Withdraw</NavLink>,
+    //     },
+    //   ],
+    // },
+    // {
+    //   key: "policy-screen",
+    //   icon: <img src={policyScreen} alt="dashboard" width={16} height={16} />,
+    //   label: <NavLink to="policy-screen">Policy Screen</NavLink>,
+    // },
     {
       key: "profile",
       icon: <img src={profile} alt="dashboard" width={16} height={16} />,
