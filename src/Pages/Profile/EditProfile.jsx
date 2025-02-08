@@ -5,18 +5,42 @@ import { useEffect, useState } from "react";
 import { EditOutlined } from "@ant-design/icons";
 import { MdOutlineEdit } from "react-icons/md";
 import { AllImages } from "../../../public/images/AllImages";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEditProfileMutation } from "../../Redux/api/userApi";
+import { toast } from "sonner";
 
 const EditProfile = () => {
-  const profileData = {
-    fullname: "James Mitchell",
-    email: "emily@gmail.com",
-    address: "Vancouver, BC VG1Z4, Canada",
-    contactNumber: "+99-01846875456",
-  };
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { profileData, refetch } = location.state || {};
+  console.log(profileData);
 
-  const onFinish = (values) => {
-    // const data = { ...values, profileImage: uploadedImage };
-    console.log("Success:", values);
+  const [imageUrl, setImageUrl] = useState(profileImage);
+  const [imageFile, setImageFile] = useState(null);
+
+  const [updateProfile, { isLoading }] = useEditProfileMutation();
+  const onFinish = async (values) => {
+    console.log("onfinish", values);
+    const formData = new FormData();
+    formData.append("fullName", values.fullName);
+    formData.append("email", values.email);
+    if (imageFile) {
+      formData.append("image", imageFile); // Append image for upload
+    }
+
+    try {
+      const response = await updateProfile(formData).unwrap(); // Send formData to the backend
+      if (response.success) {
+        toast.success("Profile updated successfully!");
+        setImageUrl(imageUrl);
+        navigate("/profile", { state: { updated: true } });
+      } else {
+        toast.error(response.message || "Failed to update profile.");
+      }
+    } catch (error) {
+      console.log("Update error:", error);
+      toast.error("An error occurred while updating the profile.");
+    }
   };
 
   return (
@@ -33,12 +57,12 @@ const EditProfile = () => {
                 <div className="mt-12  relative ">
                   <div className="rounded-full w-fit border-2 border-secondary-color overflow-hidden">
                     <img
-                      src={AllImages.profile}
+                      src={`http://10.0.70.35:8020/${profileData?.image}`}
                       alt="profile_img"
                       className="!h-40 !w-40 object-cover"
                     />
                   </div>
-                  <Form.Item name="profileImage" className="text-white ">
+                  <Form.Item name="image" className="text-white ">
                     <Upload
                       maxCount={1}
                       listType="picture"
@@ -73,7 +97,9 @@ const EditProfile = () => {
                     </Upload>
                   </Form.Item>
                 </div>
-                <p className="text-5xl font-semibold">James Mitchell</p>
+                <p className="text-5xl font-semibold">
+                  {profileData?.fullName}
+                </p>
               </div>
             </div>
           </div>
@@ -83,7 +109,7 @@ const EditProfile = () => {
                 Email
               </Typography.Title>
               <Form.Item
-                initialValue={profileData.email}
+                initialValue={profileData?.email}
                 name="email"
                 className="text-white "
               >
@@ -98,8 +124,8 @@ const EditProfile = () => {
                 Full Name
               </Typography.Title>
               <Form.Item
-                initialValue={profileData.fullname}
-                name="fullname"
+                initialValue={profileData?.fullName}
+                name="fullName"
                 className="text-white"
               >
                 <Input
@@ -108,34 +134,42 @@ const EditProfile = () => {
                   className="cursor-not-allowed py-2 px-3 text-xl bg-site-color border !border-input-color text-base-color hover:bg-transparent hover:border-secoundary-color focus:bg-transparent focus:border-secoundary-color"
                 />
               </Form.Item>
-              <Typography.Title level={5} style={{ color: "#222222" }}>
-                Address
-              </Typography.Title>
-              <Form.Item
-                initialValue={profileData.address}
-                name="address"
-                className="text-white"
-              >
-                <Input
-                  suffix={<MdOutlineEdit />}
-                  placeholder="Enter your address"
-                  className="cursor-not-allowed py-2 px-3 text-xl bg-site-color border !border-input-color text-base-color hover:bg-transparent hover:border-secoundary-color focus:bg-transparent focus:border-secoundary-color"
-                />
-              </Form.Item>
-              <Typography.Title level={5} style={{ color: "#222222" }}>
-                Contact number
-              </Typography.Title>
-              <Form.Item
-                initialValue={profileData.contactNumber}
-                name="contactNumber"
-                className="text-white"
-              >
-                <Input
-                  suffix={<MdOutlineEdit />}
-                  placeholder="Enter your Contact number"
-                  className="cursor-not-allowed py-2 px-3 text-xl bg-site-color border !border-input-color text-base-color hover:bg-transparent hover:border-secoundary-color focus:bg-transparent focus:border-secoundary-color"
-                />
-              </Form.Item>
+              {profileData?.address && (
+                <>
+                  <Typography.Title level={5} style={{ color: "#222222" }}>
+                    Address
+                  </Typography.Title>
+                  <Form.Item
+                    initialValue={profileData?.address}
+                    name="address"
+                    className="text-white"
+                  >
+                    <Input
+                      suffix={<MdOutlineEdit />}
+                      placeholder="Enter your address"
+                      className="cursor-not-allowed py-2 px-3 text-xl bg-site-color border !border-input-color text-base-color hover:bg-transparent hover:border-secoundary-color focus:bg-transparent focus:border-secoundary-color"
+                    />
+                  </Form.Item>
+                </>
+              )}
+              {profileData?.phoneNumber && (
+                <>
+                  <Typography.Title level={5} style={{ color: "#222222" }}>
+                    Contact number
+                  </Typography.Title>
+                  <Form.Item
+                    initialValue={profileData?.phoneNumber}
+                    name="phoneNumber"
+                    className="text-white"
+                  >
+                    <Input
+                      suffix={<MdOutlineEdit />}
+                      placeholder="Enter your Contact number"
+                      className="cursor-not-allowed py-2 px-3 text-xl bg-site-color border !border-input-color text-base-color hover:bg-transparent hover:border-secoundary-color focus:bg-transparent focus:border-secoundary-color"
+                    />
+                  </Form.Item>
+                </>
+              )}
               <Form.Item>
                 <Button
                   className="w-full py-6 border !border-secondary-color hover:border-secondary-color text-xl !text-primary-color bg-secondary-color hover:!bg-secondary-color font-semibold rounded-2xl mt-8"
