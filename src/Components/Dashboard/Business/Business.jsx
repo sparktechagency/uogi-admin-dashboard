@@ -1,43 +1,53 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { Input } from "antd";
-import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { Input, Spin } from "antd";
+import { useMemo, useState } from "react";
 import BusinessTable from "../../Tables/BusinessTable";
+import { useAllBusinessQuery } from "../../../Redux/api/businessApi";
 
 const Business = () => {
+  const {
+    data: allBusiness,
+    isLoading: isFetching,
+    // eslint-disable-next-line no-unused-vars
+    error: fetchError,
+  } = useAllBusinessQuery();
+
+  const businessData = allBusiness?.data;
+  console.log(businessData);
   //* Store Search Value
   const [searchText, setSearchText] = useState("");
 
   //* Use to set user
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("/data/businessData.json");
-
-        setData(response?.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  // const [data, setData] = useState([]);
+  // const [loading, setLoading] = useState(true);
 
   const filteredData = useMemo(() => {
-    if (!searchText) return data;
-    return data.filter((item) =>
+    if (!searchText) return businessData;
+    return businessData.filter((item) =>
       item.businessName.toLowerCase().includes(searchText.toLowerCase())
     );
-  }, [data, searchText]);
+  }, [businessData, searchText]);
 
   const onSearch = (value) => {
     setSearchText(value);
   };
+
+  if (isFetching) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin size="large" tip="Loading businessData..." />
+      </div>
+    );
+  }
+
+  // Show error message if fetch fails
+  if (fetchError) {
+    return (
+      <div className="text-white">
+        Error loading aboutUs. Please try again later.
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[90vh]">
@@ -61,7 +71,11 @@ const Business = () => {
           </div>
         </div>
         <div className="px-2 lg:px-6">
-          <BusinessTable data={filteredData} loading={loading} pageSize={12} />
+          <BusinessTable
+            data={filteredData}
+            loading={isFetching}
+            pageSize={8}
+          />
         </div>
       </div>
     </div>

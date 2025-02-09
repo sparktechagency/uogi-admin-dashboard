@@ -90,7 +90,7 @@ export default function AllUsers() {
             loading={loadingUser}
             showCustomerViewModal={showCustomerViewModal}
             showDeleteModal={showDeleteModal}
-            pageSize={12}
+            pageSize={8}
           />
         </div>
 

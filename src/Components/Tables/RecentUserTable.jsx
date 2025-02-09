@@ -2,7 +2,7 @@
 import { Table } from "antd";
 import dayjs from "dayjs";
 
-const RecentUserTable = ({ data, loading, pageSize = 0 }) => {
+const RecentUserTable = ({ data, loading, pageSize = 5 }) => {
   const columns = [
     {
       title: "#SI",

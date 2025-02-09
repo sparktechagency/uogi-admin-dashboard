@@ -4,7 +4,7 @@ import { GoEye } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 
 const BusinessTable = ({ data, loading, pageSize = 0 }) => {
-  const navigate = useNavigate(); // Move useNavigate to the top level of the component
+  const navigate = useNavigate();
 
   const columns = [
     {
@@ -16,6 +16,7 @@ const BusinessTable = ({ data, loading, pageSize = 0 }) => {
       title: "Business Email",
       dataIndex: "businessEmail",
       key: "businessEmail",
+      render: (_, record) => record?.businessId?.email || "N/A",
     },
     {
       title: "Total Service",
