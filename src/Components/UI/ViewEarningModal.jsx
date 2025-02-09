@@ -7,13 +7,14 @@ const ViewEarningModal = ({
   handleCancel,
 }) => {
   const transactionInfo = currentRecord;
+  console.log(transactionInfo);
 
   return (
     <Modal
       title={
         <div className="pt-5 px-5">
-          <h2 className="text-secondary-color text-4xl mb-2">
-            Business Details
+          <h2 className="text-secondary-color text-4xl mb-2 text-center">
+            Earning Details
           </h2>
         </div>
       }
@@ -26,13 +27,16 @@ const ViewEarningModal = ({
         <div className=" p-5">
           <div className="flex items-center gap-2 mb-3">
             <p className="text-sm sm:text-base lg:text-lg  font-semibold">
-              Bank name:
+              Business name:
             </p>
             <p className="text-sm sm:text-base lg:text-lg">
-              {transactionInfo?.bankName}
+              {
+                transactionInfo?.serviceBookingId?.serviceId?.businessId
+                  ?.businessName
+              }
             </p>
           </div>
-          <div className="flex items-center gap-2 mb-3">
+          {/* <div className="flex items-center gap-2 mb-3">
             <p className="text-sm sm:text-base lg:text-lg  font-semibold">
               Account number:
             </p>
@@ -47,21 +51,21 @@ const ViewEarningModal = ({
             <p className="text-sm sm:text-base lg:text-lg">
               {transactionInfo?.accountName}
             </p>
-          </div>
+          </div> */}
           <div className="flex items-center gap-2 mb-3">
             <p className="text-sm sm:text-base lg:text-lg  font-semibold">
               Current amount:
             </p>
             <p className="text-sm sm:text-base lg:text-lg">
-              {transactionInfo?.currentAmount}
+              {transactionInfo?.bookingprice}
             </p>
           </div>
           <div className="flex items-center gap-2 mb-3">
             <p className="text-sm sm:text-base lg:text-lg  font-semibold">
-              Withdraw amount:
+              Status:
             </p>
             <p className="text-sm sm:text-base lg:text-lg">
-              {transactionInfo?.withdrawAmount}
+              {transactionInfo?.status}
             </p>
           </div>
           <div className="flex items-center gap-2 mb-3">
@@ -69,7 +73,7 @@ const ViewEarningModal = ({
               Transaction ID:
             </p>
             <p className="text-sm sm:text-base lg:text-lg">
-              {transactionInfo?.traxId || "Not available"}
+              {transactionInfo?.transactionId || "Not available"}
             </p>
           </div>
         </div>
@@ -77,10 +81,10 @@ const ViewEarningModal = ({
 
       <div className="flex justify-end">
         <Button
-          type="primary"
+          onClick={handleCancel}
           className="py-5 text-white !bg-[#FE5C8E] hover:!bg-secondary-color w-full text-2xl"
         >
-          Submit
+          Okay
         </Button>
       </div>
     </Modal>

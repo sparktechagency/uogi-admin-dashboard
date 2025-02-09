@@ -14,5 +14,6 @@ export const baseApi = createApi({
     "settings",
     "service",
     "business",
+    "earning",
   ],
 });

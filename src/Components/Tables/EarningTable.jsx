@@ -1,29 +1,31 @@
 /* eslint-disable react/prop-types */
 import { Button, Space, Table, Tooltip } from "antd";
+import dayjs from "dayjs";
 import { GoEye } from "react-icons/go";
 
 const EarningTable = ({ data, loading, showViewModal, pageSize = 0 }) => {
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
+      title: "Txn ID",
+      dataIndex: "transactionId",
+      key: "transactionId",
       responsive: ["md"],
     },
     {
-      title: "Acc. Number",
-      dataIndex: "accNumber",
-      key: "accNumber",
-    },
-    {
-      title: "Time & date",
-      dataIndex: "time",
-      key: "time",
-    },
-    {
       title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
+      dataIndex: "depositAmount",
+      key: "depositAmount",
+    },
+    {
+      title: "Time & Date",
+      dataIndex: "transactionDate",
+      key: "transactionDate",
+      render: (date) => (date ? dayjs(date).format("DD-MM-YYYY hh:mm A") : "-"),
+    },
+    {
+      title: "Payment Method",
+      dataIndex: "method",
+      key: "method",
     },
 
     {
