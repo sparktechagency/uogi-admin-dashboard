@@ -6,7 +6,7 @@ import { useUserProfileQuery } from "../../Redux/api/userApi";
 import { useEffect, useState } from "react";
 
 const Profile = () => {
-  const { data: userProfile } = useUserProfileQuery();
+  const { data: userProfile, refetch } = useUserProfileQuery();
   // console.log(userProfile);
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState({
@@ -31,6 +31,12 @@ const Profile = () => {
     }
   }, [userProfile]);
 
+  useEffect(() => {
+    if (location.state?.updated) {
+      refetch();
+    }
+  }, [location.state, refetch]);
+
   const handleEditClick = () => {
     navigate("edit-profile", { state: { profileData } });
   };
@@ -42,7 +48,9 @@ const Profile = () => {
           <div className="flex items-center justify-center gap-8">
             <img
               className="h-40 w-40 relative"
-              src={`http://10.0.70.35:8020/${profileData?.image}`}
+              src={`http://10.0.70.35:8020/${
+                profileData?.image
+              }?t=${new Date().getTime()}`}
               alt=""
             />
             <p className="text-5xl font-semibold">{profileData?.fullName}</p>

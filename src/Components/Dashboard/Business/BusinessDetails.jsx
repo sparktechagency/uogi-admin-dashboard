@@ -1,46 +1,36 @@
 import { MdOutlineArrowBackIosNew } from "react-icons/md";
-import { Link } from "react-router-dom";
-import { AllImages, AllServices } from "../../../../public/images/AllImages";
+import { Link, useLocation } from "react-router-dom";
+import { useAllServicesQuery } from "../../../Redux/api/serviceApi";
+import { useEffect, useState } from "react";
 
-const businessDetail = {
-  id: "01",
-  name: "Olivia Ema",
-  email: "abc@gmail.com",
-  contactNumber: "+88-01#########",
-  address: "247 street road",
-  dateOfBirth: "06-12-1987",
-  licenseId: "198706121987",
-  image: AllImages.userImage,
-};
+const BusinessDetails = () => {
+  const location = useLocation();
+  const [services, setServices] = useState([]);
+  const businessData = location.state?.businessData;
+  // console.log(businessData);
 
-const services = [
-  {
-    _id: "001",
-    serviceName: "Brows and Lashes",
-    businessName: "",
-    owner: "Olivia Ema",
-    imageUrl: AllServices.service1,
-    price: "30",
-  },
-  {
-    _id: "002",
-    serviceName: "Manicure / pedicure",
-    businessName: "",
-    owner: "Olivia Ema",
-    imageUrl: AllServices.service2,
-    price: "25",
-  },
-  {
-    _id: "003",
-    serviceName: "Aesthetics",
-    businessName: "",
-    owner: "Olivia Ema",
-    imageUrl: AllServices.service3,
-    price: "40",
-  },
-];
+  const {
+    data: allServices,
+    isLoading: isFetching,
+    error: fetchError,
+  } = useAllServicesQuery();
+  const servicesData = allServices?.data?.result;
 
-const BusinessDetasils = () => {
+  useEffect(() => {
+    console.log("API Response:", allServices);
+    if (Array.isArray(servicesData) && servicesData.length > 0) {
+      setServices(servicesData);
+    }
+  }, [servicesData]);
+
+  if (isFetching) {
+    return <div>Loading...</div>;
+  }
+  if (fetchError) {
+    return <div>Error: {fetchError.message}</div>;
+  }
+
+  console.log(services);
   return (
     <div className="min-h-screen">
       {" "}
@@ -57,12 +47,12 @@ const BusinessDetasils = () => {
           <div className="flex justify-center items-center p-4 border-b">
             {/* Avatar */}
             <img
-              src={businessDetail.image}
+              src={`http://10.0.70.35:8020/${businessData?.businessId?.image}`}
               alt="business"
               className="w-14 h-14 sm:w-20  sm:h-20 rounded-lg mr-4"
             />
             <div className="text-xl sm:text-3xl font-bold">
-              {businessDetail.name}
+              {businessData?.businessId?.fullName}
             </div>
           </div>
 
@@ -70,24 +60,26 @@ const BusinessDetasils = () => {
             <div className="grid md:grid-cols-2 text-start gap-4 text-lg">
               <div className="sm:flex gap-1">
                 <div className="font-bold">Email:</div>
-                <div>{businessDetail.email}</div>
+                <div> {businessData?.businessId?.email}</div>
               </div>
-              <div className="sm:flex gap-1">
-                <div className="font-bold">Contact number:</div>
-                <div>{businessDetail.contactNumber}</div>
-              </div>
-              <div className="sm:flex gap-1">
-                <div className="font-bold">Address:</div>
-                <div>{businessDetail.address}</div>
-              </div>
-              <div className="sm:flex gap-1">
-                <div className="font-bold">Date of Birth:</div>
-                <div>{businessDetail.dateOfBirth}</div>
-              </div>
-              <div className="sm:flex gap-1">
-                <div className="font-bold">License ID</div>
-                <div>{businessDetail.licenseId}</div>
-              </div>
+              {businessData?.businessId?.contactNumber && (
+                <div className="sm:flex gap-1">
+                  <div className="font-bold">Contact number:</div>
+                  <div> {businessData?.businessId?.contactNumber}</div>
+                </div>
+              )}
+              {businessData?.businessId?.address && (
+                <div className="sm:flex gap-1">
+                  <div className="font-bold">Address:</div>
+                  <div> {businessData?.businessId?.address}</div>
+                </div>
+              )}
+              {businessData?.businessId?.licenseId && (
+                <div className="sm:flex gap-1">
+                  <div className="font-bold">License ID:</div>
+                  <div> {businessData?.businessId?.licenseId}</div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -106,13 +98,14 @@ const BusinessDetasils = () => {
               {services.map((service, index) => (
                 <Link
                   key={index}
-                  to={`/services/${service._id}`}
+                  to={`/services/${service?._id}`}
+                  state={service}
                   className="hover:text-base-color"
                 >
                   <div className="flex flex-col gap-2 bg-[#FEF2F5] border border-[#FEF2F5] px-4 py-3 rounded-md">
                     <div className="relative rounded-md">
                       <img
-                        src={service.imageUrl}
+                        src={`http://10.0.70.35:8020/${service?.serviceImage}`}
                         alt="service"
                         className="w-full h-[180px] sm:h-[220px] object-cover rounded-md"
                       />
@@ -126,16 +119,16 @@ const BusinessDetasils = () => {
                     <div>
                       <div className="flex items-center gap-2 mt-3">
                         <img
-                          src={AllImages.userImage}
+                          src={`http://10.0.70.35:8020/${service?.businessUserId?.image}`}
                           className="h-6 lg:h-8 w-6 lg:w-8 rounded-full"
                           alt="business"
                         />
                         <h1 className="text-2xl font-medium">
-                          {service.owner}
+                          {service?.businessUserId?.fullName}
                         </h1>
                       </div>
                       <p className="text-lg mt-1">
-                        Price: <span>£{service.price}</span>
+                        Price: <span>£{service?.servicePrice}</span>
                       </p>
                     </div>
                   </div>
@@ -149,4 +142,4 @@ const BusinessDetasils = () => {
   );
 };
 
-export default BusinessDetasils;
+export default BusinessDetails;

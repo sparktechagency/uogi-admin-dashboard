@@ -25,11 +25,11 @@ import Notifications from "../Dashboard/Notifications";
 import Services from "../Dashboard/Services/Services";
 import ServiceDetails from "../Dashboard/Services/ServiceDetails";
 import Business from "../Dashboard/Business/Business";
-import BusinessDetasils from "../Dashboard/Business/BusinessDetasils";
 import Deposit from "../Dashboard/Earning/Deposite";
 import Withdraw from "../Dashboard/Earning/Withdraw";
 import PolicyScreen from "../Dashboard/PolicyScreen/PolicyScreen";
 import Earning from "../Dashboard/Earning/Earning";
+import BusinessDetails from "../Dashboard/Business/BusinessDetails";
 
 //
 
@@ -76,7 +76,7 @@ const router = createBrowserRouter([
           },
           {
             path: "business/:id",
-            element: <BusinessDetasils />,
+            element: <BusinessDetails />,
           },
           {
             path: "services",

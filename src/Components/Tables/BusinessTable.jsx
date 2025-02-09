@@ -1,10 +1,14 @@
 /* eslint-disable react/prop-types */
-import { Button, Space, Table, Tooltip } from "antd";
+import { Button, Space, Table, Tag, Tooltip } from "antd";
 import { GoEye } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 
 const BusinessTable = ({ data, loading, pageSize = 0 }) => {
-  const navigate = useNavigate(); // Move useNavigate to the top level of the component
+  const navigate = useNavigate();
+
+  const handleNavigate = (record) => {
+    navigate(`/business/${record._id}`, { state: { businessData: record } });
+  };
 
   const columns = [
     {
@@ -16,31 +20,43 @@ const BusinessTable = ({ data, loading, pageSize = 0 }) => {
       title: "Business Email",
       dataIndex: "businessEmail",
       key: "businessEmail",
+      render: (_, record) => record?.businessId?.email || "N/A",
     },
     {
-      title: "Total Service",
-      dataIndex: "totalService",
-      key: "totalService",
+      title: "Business Type",
+      dataIndex: "businessType",
+      key: "businessType",
+      render: (types) =>
+        types && Array.isArray(types) && types.length > 0 ? (
+          <>
+            {types.map((type, index) => (
+              <Tag color="#FE5C8E" key={index}>
+                {type}
+              </Tag>
+            ))}
+          </>
+        ) : (
+          <span>-</span>
+        ),
+    },
+    {
+      title: "Location",
+      dataIndex: "businessLocation",
+      key: "businessLocation",
       render: (text) => <span>{text}</span>,
     },
     {
-      title: "Completed Service",
-      dataIndex: "completedService",
-      key: "completedService",
+      title: "Payment Method",
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
       render: (text) => <span>{text}</span>,
     },
-    {
-      title: "Total Earning",
-      dataIndex: "totalEarning",
-      key: "totalEarning",
-      render: (text) => <span>{text}</span>,
-    },
-    {
-      title: "Total Withdraw",
-      dataIndex: "totalWithdraw",
-      key: "totalWithdraw",
-      render: (text) => <span>{text}</span>,
-    },
+    // {
+    //   title: "Total Withdraw",
+    //   dataIndex: "totalWithdraw",
+    //   key: "totalWithdraw",
+    //   render: (text) => <span>{text}</span>,
+    // },
     {
       title: "Action",
       key: "action",
@@ -54,7 +70,7 @@ const BusinessTable = ({ data, loading, pageSize = 0 }) => {
                 border: "none",
                 color: "#222222",
               }}
-              onClick={() => navigate(`/business/${record.id}`)} // Use navigate here
+              onClick={() => handleNavigate(record)}
             >
               <GoEye style={{ fontSize: "24px" }} />
             </Button>
