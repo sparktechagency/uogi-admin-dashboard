@@ -6,19 +6,21 @@ import { EditOutlined } from "@ant-design/icons";
 import { MdOutlineEdit } from "react-icons/md";
 import { AllImages } from "../../../public/images/AllImages";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEditProfileMutation } from "../../Redux/api/userApi";
+import { useEditProfileMutation, useUserProfileQuery } from "../../Redux/api/userApi";
 import { toast } from "sonner";
 
 const EditProfile = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { profileData, refetch } = location.state || {};
+  const { profileData } = location.state || {};
   console.log(profileData);
 
+  const { refetch } = useUserProfileQuery();
   const [imageUrl, setImageUrl] = useState(profileImage);
   const [imageFile, setImageFile] = useState(null);
 
   const [updateProfile, { isLoading }] = useEditProfileMutation();
+
   const onFinish = async (values) => {
     console.log("onfinish", values);
     const formData = new FormData();
@@ -33,6 +35,8 @@ const EditProfile = () => {
       if (response.success) {
         toast.success("Profile updated successfully!");
         setImageUrl(imageUrl);
+
+        await refetch();
         navigate("/profile", { state: { updated: true } });
       } else {
         toast.error(response.message || "Failed to update profile.");
