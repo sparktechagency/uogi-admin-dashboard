@@ -1,8 +1,11 @@
 /* eslint-disable react/prop-types */
 import { Table } from "antd";
 import dayjs from "dayjs";
+import { getImageUrl } from "../../utils/baseUrl";
 
 const RecentUserTable = ({ data, loading, pageSize = 5 }) => {
+  const imageUrl = getImageUrl();
+
   const columns = [
     {
       title: "#SI",
@@ -19,7 +22,7 @@ const RecentUserTable = ({ data, loading, pageSize = 5 }) => {
         <div className="flex items-center">
           {record?.image && (
             <img
-              src={`http://10.0.70.35:8020/${record.image}`}
+              src={`${imageUrl}/${record.image}`}
               alt={text}
               style={{
                 width: 40,

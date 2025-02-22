@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ConfigProvider, Select } from "antd";
 import { useAllServicesQuery } from "../../../Redux/api/serviceApi";
+import { getImageUrl } from "../../../utils/baseUrl";
 
 const Services = () => {
   const {
@@ -13,6 +14,8 @@ const Services = () => {
   console.log(servicesData);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [uniqueCategories, setUniqueCategories] = useState([]);
+
+  const imageUrl = getImageUrl();
 
   useEffect(() => {
     if (Array.isArray(servicesData) && servicesData.length > 0) {
@@ -91,7 +94,7 @@ const Services = () => {
                 <div className="flex flex-col gap-2 bg-[#FEF2F5] border border-[#FEF2F5] px-4 py-3 rounded-md">
                   <div className="relative rounded-md">
                     <img
-                      src={`http://10.0.70.35:8020/${service?.serviceImage}`}
+                      src={`${imageUrl}/${service?.serviceImage}`}
                       alt="service"
                       className="w-full h-[180px] sm:h-[220px] object-cover rounded-md"
                     />
@@ -105,7 +108,7 @@ const Services = () => {
                   <div>
                     <div className="flex items-center gap-2 mt-3">
                       <img
-                        src={`http://10.0.70.35:8020/${service?.businessUserId?.image}`}
+                        src={`${imageUrl}/${service?.businessUserId?.image}`}
                         className="h-6 lg:h-8 w-6 lg:w-8 rounded-full"
                         alt="business"
                       />

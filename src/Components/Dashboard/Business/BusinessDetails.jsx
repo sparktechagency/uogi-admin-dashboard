@@ -2,6 +2,7 @@ import { MdOutlineArrowBackIosNew } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 import { useAllServicesQuery } from "../../../Redux/api/serviceApi";
 import { useEffect, useState } from "react";
+import { getImageUrl } from "../../../utils/baseUrl";
 
 const BusinessDetails = () => {
   const location = useLocation();
@@ -15,6 +16,8 @@ const BusinessDetails = () => {
     error: fetchError,
   } = useAllServicesQuery();
   const servicesData = allServices?.data?.result;
+
+  const imageUrl = getImageUrl();
 
   useEffect(() => {
     console.log("API Response:", allServices);
@@ -47,7 +50,7 @@ const BusinessDetails = () => {
           <div className="flex justify-center items-center p-4 border-b">
             {/* Avatar */}
             <img
-              src={`http://10.0.70.35:8020/${businessData?.businessId?.image}`}
+              src={`${imageUrl}/${businessData?.businessId?.image}`}
               alt="business"
               className="w-14 h-14 sm:w-20  sm:h-20 rounded-lg mr-4"
             />
@@ -105,7 +108,7 @@ const BusinessDetails = () => {
                   <div className="flex flex-col gap-2 bg-[#FEF2F5] border border-[#FEF2F5] px-4 py-3 rounded-md">
                     <div className="relative rounded-md">
                       <img
-                        src={`http://10.0.70.35:8020/${service?.serviceImage}`}
+                        src={`${imageUrl}/${service?.serviceImage}`}
                         alt="service"
                         className="w-full h-[180px] sm:h-[220px] object-cover rounded-md"
                       />
@@ -119,7 +122,7 @@ const BusinessDetails = () => {
                     <div>
                       <div className="flex items-center gap-2 mt-3">
                         <img
-                          src={`http://10.0.70.35:8020/${service?.businessUserId?.image}`}
+                          src={`${imageUrl}/${service?.businessUserId?.image}`}
                           className="h-6 lg:h-8 w-6 lg:w-8 rounded-full"
                           alt="business"
                         />

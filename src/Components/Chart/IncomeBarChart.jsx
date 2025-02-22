@@ -12,7 +12,7 @@ import { useIncomeByYearQuery } from "../../Redux/api/dashboardApi";
 import { useEffect, useState } from "react";
 
 const IncomeBarChart = ({ selectedYear }) => {
-  // console.log(selectedYear);
+  console.log(selectedYear);
 
   const { data: incomeData, refetch } = useIncomeByYearQuery(selectedYear);
   const [chartData, setChartData] = useState([]);

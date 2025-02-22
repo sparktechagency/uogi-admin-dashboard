@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Modal } from "antd";
 import dayjs from "dayjs";
+import { getImageUrl } from "../../utils/baseUrl";
 
 const ViewCustomerModal = ({
   isViewCustomer,
@@ -8,6 +9,8 @@ const ViewCustomerModal = ({
   currentRecord,
   // handleBlock,
 }) => {
+  const imageUrl = getImageUrl();
+
   return (
     <Modal
       title={
@@ -28,7 +31,7 @@ const ViewCustomerModal = ({
             {/* Avatar */}
             {currentRecord?.image && (
               <img
-                src={`http://10.0.70.35:8020/${currentRecord.image}`}
+                src={`${imageUrl}/${currentRecord.image}`}
                 alt={currentRecord?.fullName}
                 className="w-14 h-14 sm:w-20  sm:h-20 rounded-lg mr-4"
               />

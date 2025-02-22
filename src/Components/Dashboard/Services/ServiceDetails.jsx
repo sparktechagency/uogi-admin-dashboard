@@ -1,9 +1,12 @@
 import { useLocation } from "react-router-dom";
+import { getImageUrl } from "../../../utils/baseUrl";
 
 const ServiceDetails = () => {
   const location = useLocation();
   console.log("location", location);
   const service = location?.state || {};
+
+  const imageUrl = getImageUrl();
 
   // if (isFetching) {
   //   return <div>Loading...</div>;
@@ -25,7 +28,7 @@ const ServiceDetails = () => {
         {/* Image Section */}
         <div className="mb-6">
           <img
-            src={`http://10.0.70.35:8020/${service?.serviceImage}`}
+            src={`${imageUrl}/${service?.serviceImage}`}
             alt="Brows and Lashes"
             height={100}
             width={100}
@@ -51,7 +54,7 @@ const ServiceDetails = () => {
         <div className="flex items-center space-x-4">
           {service?.businessUserId?.image && (
             <img
-              src={`http://10.0.70.35:8020/${service?.businessUserId?.image}`}
+              src={`${imageUrl}/${service?.businessUserId?.image}`}
               alt={service?.businessUserId?.fullName}
               className="w-16 h-16 rounded-full object-cover"
             />

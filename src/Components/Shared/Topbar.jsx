@@ -7,6 +7,7 @@ import { useState } from "react";
 import user from "/images/user.png";
 import { AllImages } from "../../../public/images/AllImages";
 import { useUserProfileQuery } from "../../Redux/api/userApi";
+import { getImageUrl } from "../../utils/baseUrl";
 
 const notifications = [
   {
@@ -43,6 +44,8 @@ const Topbar = ({ collapsed, setCollapsed }) => {
   // const [notificationCount, setNotificationCount] = useState(
   //   notifications.length
   // );
+
+  const imageUrl = getImageUrl();
 
   // const handleMenuClick = () => {
   //   setNotificationCount(0); // Reset notification count when the menu is clicked
@@ -98,7 +101,8 @@ const Topbar = ({ collapsed, setCollapsed }) => {
           className="flex items-center justify-center gap-2 bg-transparent text-base-color border-0 rounded-lg h-8 px-2 py-1  mr-5"
         >
           <img
-            src={`http://10.0.70.35:8020/${user?.image}`}
+            src={`${imageUrl}/${user?.image}`}
+            // src={`/${image}`}
             alt="profile_pic"
             style={{ width: "30px", height: "30px", marginRight: "10px" }}
             className="rounded"

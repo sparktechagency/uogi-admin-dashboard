@@ -124,8 +124,9 @@ const Dashboard = () => {
                   >
                     <Select
                       onChange={(value) => setSelectedYear(value)}
-                      defaultValue="2024"
+                      defaultValue="2025"
                       options={[
+                        { value: "2025", label: "2025" },
                         { value: "2024", label: "2024" },
                         { value: "2023", label: "2023" },
                         { value: "2022", label: "2022" },
@@ -209,9 +210,7 @@ const Dashboard = () => {
           <div className="flex flex-col lg:flex-row gap-4 mt-5">
             <div className="bg-[#FFFFFF] rounded flex-1 p-3">
               <div className="flex justify-between items-center mx-3 py-2">
-                <p className="text-2xl font-semibold text-base-color">
-                  Users
-                </p>
+                <p className="text-2xl font-semibold text-base-color">Users</p>
                 <div>
                   <Link to="/users">
                     <p className="bg-[#FEF2F5] border border-secondary-color text-[#FE5C8E] px-3 py-1 rounded-lg">

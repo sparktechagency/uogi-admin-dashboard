@@ -2,13 +2,11 @@
 import { Button, Space, Table, Tooltip } from "antd";
 import dayjs from "dayjs";
 import { GoEye } from "react-icons/go";
+import { getImageUrl } from "../../utils/baseUrl";
 
-const UsersTable = ({
-  data,
-  loading,
-  showCustomerViewModal,
-  pageSize = 0,
-}) => {
+const UsersTable = ({ data, loading, showCustomerViewModal, pageSize = 0 }) => {
+  const imageUrl = getImageUrl();
+
   const columns = [
     {
       title: "#SI",
@@ -25,7 +23,7 @@ const UsersTable = ({
         <div className="flex items-center">
           {record?.image && (
             <img
-              src={`http://10.0.70.35:8020/${record.image}`}
+              src={`${imageUrl}/${record.image}`}
               alt={text}
               style={{
                 width: 40,

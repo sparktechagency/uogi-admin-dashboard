@@ -4,10 +4,13 @@ import { EditOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useUserProfileQuery } from "../../Redux/api/userApi";
 import { useEffect, useState } from "react";
+import { getImageUrl } from "../../utils/baseUrl";
 
 const Profile = () => {
   const { data: userProfile, refetch } = useUserProfileQuery();
   // console.log(userProfile);
+  const imageUrl = getImageUrl();
+
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState({
     fullName: "",
@@ -48,7 +51,7 @@ const Profile = () => {
           <div className="flex items-center justify-center gap-8">
             <img
               className="h-40 w-40 relative"
-              src={`http://10.0.70.35:8020/${
+              src={`${imageUrl}/${
                 profileData?.image
               }?t=${new Date().getTime()}`}
               alt=""

@@ -1,3 +1,7 @@
 export const getBaseUrl = () => {
-  return "http://10.0.70.35:8020/api/v1";
+  return "http://139.59.0.25:8075/api/v1";
+};
+
+export const getImageUrl = () => {
+  return "http://139.59.0.25:8075"
 };
