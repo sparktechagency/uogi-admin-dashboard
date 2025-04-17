@@ -6,8 +6,12 @@ import { EditOutlined } from "@ant-design/icons";
 import { MdOutlineEdit } from "react-icons/md";
 import { AllImages } from "../../../public/images/AllImages";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEditProfileMutation, useUserProfileQuery } from "../../Redux/api/userApi";
+import {
+  useEditProfileMutation,
+  useUserProfileQuery,
+} from "../../Redux/api/userApi";
 import { toast } from "sonner";
+import { getImageUrl } from "../../utils/baseUrl";
 
 const EditProfile = () => {
   const navigate = useNavigate();
@@ -18,6 +22,8 @@ const EditProfile = () => {
   const { refetch } = useUserProfileQuery();
   const [imageUrl, setImageUrl] = useState(profileImage);
   const [imageFile, setImageFile] = useState(null);
+
+  const imageUrlIp = getImageUrl();
 
   const [updateProfile, { isLoading }] = useEditProfileMutation();
 
@@ -61,7 +67,7 @@ const EditProfile = () => {
                 <div className="mt-12  relative ">
                   <div className="rounded-full w-fit border-2 border-secondary-color overflow-hidden">
                     <img
-                      src={`http://10.0.70.35:8020/${profileData?.image}`}
+                      src={`${imageUrlIp}/${profileData?.image}`}
                       alt="profile_img"
                       className="!h-40 !w-40 object-cover"
                     />
