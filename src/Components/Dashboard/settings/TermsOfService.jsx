@@ -32,7 +32,7 @@ const TermsOfService = () => {
   const handleOnSave = async () => {
     try {
       await updateSettings({ termsOfService: content }).unwrap();
-      toast.success("termsOfService updated successfully!");
+      toast.success("Terms & Confition Updated Successfully!");
       // if
       // (getSettingsData?.data.termsOfService) { }
       //  else {
@@ -42,7 +42,7 @@ const TermsOfService = () => {
       // }
       refetch(); // Refresh the data after save
     } catch (error) {
-      toast.error("Failed to save termsOfService. Please try again.");
+      toast.error("Failed to save Terms & Confition. Please try again.");
       console.error("Save error:", error);
     }
   };
