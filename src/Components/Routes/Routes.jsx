@@ -30,6 +30,7 @@ import Withdraw from "../Dashboard/Earning/Withdraw";
 import PolicyScreen from "../Dashboard/PolicyScreen/PolicyScreen";
 import Earning from "../Dashboard/Earning/Earning";
 import BusinessDetails from "../Dashboard/Business/BusinessDetails";
+import ProtectedRoute from "../../utils/ProtectedRoute";
 
 //
 
@@ -56,7 +57,11 @@ const router = createBrowserRouter([
       },
       {
         path: "",
-        element: <DashboardLayout />,
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "/",

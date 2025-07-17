@@ -2,6 +2,7 @@ import { Button, Spin } from "antd";
 import JoditEditor from "jodit-react";
 import { useEffect, useRef, useState } from "react";
 import {
+  useAddSettingsMutation,
   useGetSettingsQuery,
   useUpdateSettingsMutation,
 } from "../../../Redux/api/settingsApi";
@@ -19,6 +20,7 @@ const TermsOfService = () => {
   } = useGetSettingsQuery();
   console.log(getSettingsData?.data?.termsOfService);
 
+  const [addSettings, { isLoading: isAdding }] = useAddSettingsMutation();
   const [updateSettings, { isLoading: isUpdating }] =
     useUpdateSettingsMutation();
 
@@ -31,23 +33,25 @@ const TermsOfService = () => {
 
   const handleOnSave = async () => {
     try {
-      await updateSettings({ termsOfService: content }).unwrap();
-      toast.success("Terms & Confition Updated Successfully!");
-      // if
-      // (getSettingsData?.data.termsOfService) { }
-      //  else {
-      //   // Add a new termsOfService if not existing
-      //   await addSettings({ termsOfService: content }).unwrap();
-      //   toast.success("termsOfService added successfully!");
-      // }
-      refetch(); // Refresh the data after save
+      if (!getSettingsData?.data) {
+        console.log("add api hit");
+        const response = await addSettings().unwrap();
+        console.log("add response", response);
+        toast.success("Terms Of Service added successfully!");
+      } else {
+        console.log("update api hit");
+        const res = await updateSettings({ termsOfService: content }).unwrap();
+        console.log("update res", res);
+        toast.success("Terms Of Service updated successfully!");
+      }
+      refetch();
     } catch (error) {
       toast.error("Failed to save Terms & Confition. Please try again.");
       console.error("Save error:", error);
     }
   };
 
-  if (isFetching) {
+  if (isFetching || isAdding || isUpdating) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spin size="large" tip="Loading termsOfService..." />
@@ -80,7 +84,7 @@ const TermsOfService = () => {
         </div>
         <Button
           onClick={handleOnSave}
-          loading={isUpdating}
+          loading={isAdding || isUpdating}
           className="w-full py-6 border !border-secondary-color hover:border-secondary-color text-xl !text-primary-color bg-secondary-color hover:!bg-secondary-color font-semibold rounded-2xl mt-8"
         >
           Save

@@ -2,6 +2,7 @@ import { Button, Spin } from "antd";
 import JoditEditor from "jodit-react";
 import { useEffect, useRef, useState } from "react";
 import {
+  useAddSettingsMutation,
   useGetSettingsQuery,
   useUpdateSettingsMutation,
 } from "../../../Redux/api/settingsApi";
@@ -17,8 +18,9 @@ const PrivacyPolicy = () => {
     error: fetchError,
     refetch,
   } = useGetSettingsQuery();
-  console.log(getSettingsData?.data?.privacyPolicy);
+  console.log(getSettingsData?.data);
 
+  const [addSettings, { isLoading: isAdding }] = useAddSettingsMutation();
   const [updateSettings, { isLoading: isUpdating }] =
     useUpdateSettingsMutation();
 
@@ -31,23 +33,25 @@ const PrivacyPolicy = () => {
 
   const handleOnSave = async () => {
     try {
-      await updateSettings({ privacyPolicy: content }).unwrap();
-      toast.success("privacyPolicy updated successfully!");
-      // if
-      // (getSettingsData?.data.privacyPolicy) { }
-      //  else {
-      //   // Add a new privacyPolicy if not existing
-      //   await addSettings({ privacyPolicy: content }).unwrap();
-      //   toast.success("privacyPolicy added successfully!");
-      // }
-      refetch(); // Refresh the data after save
+      if (!getSettingsData?.data) {
+        console.log("add api hit");
+        const response = await addSettings().unwrap();
+        console.log("add response", response);
+        toast.success("Privacy Policy added successfully!");
+      } else {
+        console.log("update api hit");
+        const res = await updateSettings({ privacyPolicy: content }).unwrap();
+        console.log("update res", res);
+        toast.success("Privacy Policy updated successfully!");
+      }
+      refetch();
     } catch (error) {
-      toast.error("Failed to save privacyPolicy. Please try again.");
+      toast.error("Failed to save Privacy Policy. Please try again.");
       console.error("Save error:", error);
     }
   };
 
-  if (isFetching) {
+  if (isFetching || isAdding || isUpdating) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spin size="large" tip="Loading privacyPolicy..." />
@@ -80,7 +84,7 @@ const PrivacyPolicy = () => {
         </div>
         <Button
           onClick={handleOnSave}
-          loading={isUpdating}
+          loading={isAdding || isUpdating}
           className="w-full py-6 border !border-secondary-color hover:border-secondary-color text-xl !text-primary-color bg-secondary-color hover:!bg-secondary-color font-semibold rounded-2xl mt-8"
         >
           Save

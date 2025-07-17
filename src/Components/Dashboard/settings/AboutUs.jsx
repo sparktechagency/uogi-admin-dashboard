@@ -2,6 +2,7 @@ import { Button, Spin } from "antd";
 import JoditEditor from "jodit-react";
 import { useEffect, useRef, useState } from "react";
 import {
+  useAddSettingsMutation,
   // useAddSettingsMutation,
   useGetSettingsQuery,
   useUpdateSettingsMutation,
@@ -18,10 +19,10 @@ const AboutUs = () => {
     error: fetchError,
     refetch,
   } = useGetSettingsQuery();
-  console.log(getSettingsData?.data?.aboutUs);
+  console.log("about us data", getSettingsData?.data);
 
   // Mutations for adding and updating aboutUs
-  // const [addSettings, { isLoading: isAdding }] = useAddSettingsMutation();
+  const [addSettings, { isLoading: isAdding }] = useAddSettingsMutation();
   const [updateSettings, { isLoading: isUpdating }] =
     useUpdateSettingsMutation();
 
@@ -34,23 +35,25 @@ const AboutUs = () => {
 
   const handleOnSave = async () => {
     try {
-      await updateSettings({ aboutUs: content }).unwrap();
-      toast.success("aboutUs updated successfully!");
-      // if
-      // (getSettingsData?.data.aboutUs) { }
-      //  else {
-      //   // Add a new aboutUs if not existing
-      //   await addSettings({ aboutUs: content }).unwrap();
-      //   toast.success("aboutUs added successfully!");
-      // }
-      refetch(); // Refresh the data after save
+      if (!getSettingsData?.data) {
+        console.log("add api hit");
+        const response = await addSettings().unwrap();
+        console.log("add response", response);
+        toast.success("About Us added successfully!");
+      } else {
+        console.log("update api hit");
+        const res = await updateSettings({ aboutUs: content }).unwrap();
+        console.log("update res", res);
+        toast.success("About Us updated successfully!");
+      }
+      refetch();
     } catch (error) {
       toast.error("Failed to save aboutUs. Please try again.");
       console.error("Save error:", error);
     }
   };
 
-  if (isFetching) {
+  if (isFetching || isAdding || isUpdating) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spin size="large" tip="Loading aboutUs..." />
@@ -84,7 +87,7 @@ const AboutUs = () => {
         </div>
         <Button
           onClick={handleOnSave}
-          loading={isUpdating}
+          loading={isAdding || isUpdating}
           className="w-full py-6 border !border-secondary-color hover:border-secondary-color text-xl !text-primary-color bg-secondary-color hover:!bg-secondary-color font-semibold rounded-2xl mt-8"
         >
           Save

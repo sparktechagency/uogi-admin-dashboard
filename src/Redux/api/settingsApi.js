@@ -1,13 +1,13 @@
 import { baseApi } from "../baseApi";
 
-const accessToken = localStorage.getItem("accessToken");
-console.log(accessToken);
+// const accessToken = localStorage.getItem("accessToken");
+// console.log(accessToken);
 
 const settingsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     changePassword: builder.mutation({
       query: (data) => {
-        // const accessToken = localStorage.getItem("accessToken");
+        const accessToken = localStorage.getItem("accessToken");
         return {
           url: "/auth/change-password",
           method: "PATCH",
@@ -27,15 +27,21 @@ const settingsApi = baseApi.injectEndpoints({
       providesTags: ["settings"],
     }),
     addSettings: builder.mutation({
-      query: (data) => ({
-        url: "/setting",
-        method: "POST",
-        body: data,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        invalidatesTags: ["settings"],
-      }),
+      query: (data) => {
+        const accessToken = localStorage.getItem("accessToken");
+        // console.log("add Settings data", data);
+        // console.log("add settings token", accessToken);
+
+        return {
+          url: "/setting",
+          method: "POST",
+          body: data,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          invalidatesTags: ["settings"],
+        };
+      },
     }),
     updateSettings: builder.mutation({
       query: (data) => ({
