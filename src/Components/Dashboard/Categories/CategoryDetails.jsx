@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import {
-  Button,
-  ConfigProvider,
-  Modal,
-  Input,
-  Popconfirm,
-} from "antd";
+import { Button, ConfigProvider, Modal, Input, Popconfirm } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { getImageUrl } from "../../../utils/baseUrl";
 import {
@@ -201,7 +195,7 @@ const CategoryDetails = () => {
           <img
             src={`${imageUrl}/${category?.image || category?.serviceImage}`}
             alt={category?.name || category?.categoryName}
-            className="h-[350px] w-full rounded-lg object-cover"
+            className="h-[350px] w-full rounded-lg object-contain"
           />
         </div>
 

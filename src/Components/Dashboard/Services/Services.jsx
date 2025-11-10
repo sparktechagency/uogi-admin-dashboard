@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ConfigProvider, Select } from "antd";
 import { useAllServicesQuery } from "../../../Redux/api/serviceApi";
 import { getImageUrl } from "../../../utils/baseUrl";
+import { useAllCategoryQuery } from "../../../Redux/api/categoryApi";
 
 const Services = () => {
   const {
@@ -12,21 +13,17 @@ const Services = () => {
   } = useAllServicesQuery();
   const servicesData = allServices?.data?.result;
   console.log(servicesData);
+  const {
+    data: allCategories,
+    isLoading: fetchingCategories,
+    error: categoryError,
+  } = useAllCategoryQuery();
+  const categoriesData = allCategories?.data;
+  console.log("categoriesData", categoriesData);
+
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [uniqueCategories, setUniqueCategories] = useState([]);
 
   const imageUrl = getImageUrl();
-
-  useEffect(() => {
-    if (Array.isArray(servicesData) && servicesData.length > 0) {
-      // Calculate unique categories whenever services data changes
-      const uniqueCategories = [
-        ...new Set(servicesData.map((service) => service?.categoryName)),
-      ];
-
-      setUniqueCategories(uniqueCategories);
-    }
-  }, [servicesData]);
 
   // Filtered services based on selected category
   const filteredServices = selectedCategory
@@ -35,10 +32,10 @@ const Services = () => {
       )
     : servicesData;
 
-  if (isFetching) {
+  if (isFetching || fetchingCategories) {
     return <div>Loading...</div>;
   }
-  if (fetchError) {
+  if (fetchError || categoryError) {
     return <div>Error: {fetchError.message}</div>;
   }
 
@@ -71,9 +68,9 @@ const Services = () => {
                   className="w-[200px] !ring-[#FCC1BE] "
                 >
                   <Select.Option value="">All Categories</Select.Option>
-                  {uniqueCategories.map((category, index) => (
-                    <Select.Option key={index} value={category}>
-                      {category}
+                  {categoriesData.map((category, index) => (
+                    <Select.Option key={index} value={category.name}>
+                      {category.name}
                     </Select.Option>
                   ))}
                 </Select>
