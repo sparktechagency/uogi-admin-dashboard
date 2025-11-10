@@ -46,9 +46,9 @@ const Services = () => {
     <div className="min-h-[90vh]">
       <div className="bg-[#FFFFFF] rounded p-3">
         <div className="flex justify-between p-6">
-          <div className="flex flex-col md:flex-row items-center justify-between w-full gap-5">
+          <div className="flex flex-col items-center justify-between w-full gap-5 md:flex-row">
             <h1 className="text-3xl font-bold text-secondary-color">
-              All categories
+              All Services
             </h1>
             <div>
               <ConfigProvider
@@ -61,7 +61,7 @@ const Services = () => {
                   },
                 }}
               >
-                <label className="text-secondary-color text-xl mr-2 font-bold">
+                <label className="mr-2 text-xl font-bold text-secondary-color">
                   Category
                 </label>
                 <Select
@@ -83,7 +83,7 @@ const Services = () => {
         </div>
 
         <div className="px-2 lg:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 2xl:grid-cols-4">
             {filteredServices.map((service, index) => (
               <Link
                 key={index}
@@ -96,7 +96,7 @@ const Services = () => {
                     <img
                       src={`${imageUrl}/${service?.serviceImage}`}
                       alt="service"
-                      className="w-full h-[180px] sm:h-[220px] object-cover rounded-md"
+                      className="w-full h-[180px] sm:h-[200px] object-cover rounded-md"
                     />
                     <div className="w-full bg-[#18191B88] h-full absolute top-0 left-0 flex items-end rounded-md">
                       <h1 className="text-[#FFEBF1] text-xl md:text-3xl p-3">
@@ -109,14 +109,14 @@ const Services = () => {
                     <div className="flex items-center gap-2 mt-3">
                       <img
                         src={`${imageUrl}/${service?.businessUserId?.image}`}
-                        className="h-6 lg:h-8 w-6 lg:w-8 rounded-full"
+                        className="w-6 h-6 rounded-full lg:h-8 lg:w-8"
                         alt="business"
                       />
-                      <h1 className="text-2xl font-medium">
+                      <h1 className="text-xl font-medium">
                         {service?.businessUserId?.fullName}
                       </h1>
                     </div>
-                    <p className="text-lg mt-1">
+                    <p className="mt-1 text-lg">
                       Price: <span>£{service?.servicePrice}</span>
                     </p>
                   </div>

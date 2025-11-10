@@ -15,5 +15,7 @@ export const baseApi = createApi({
     "service",
     "business",
     "earning",
+    "category",
+    "subcategory",
   ],
 });

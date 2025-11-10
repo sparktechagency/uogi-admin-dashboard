@@ -23,6 +23,7 @@ import Sider from "antd/es/layout/Sider";
 import { Content, Header } from "antd/es/layout/layout";
 import { useEffect, useState } from "react";
 import { AllImages } from "../../../public/images/AllImages";
+import { MdOutlineCategory } from "react-icons/md";
 
 const DashboardLayout = () => {
   const location = useLocation();
@@ -74,12 +75,17 @@ const DashboardLayout = () => {
     },
     {
       key: "services",
-      icon: <img src={service} alt="income" width={16} height={16} />,
+      icon: <img src={service} alt="services" width={16} height={16} />,
       label: <NavLink to="services">Services</NavLink>,
     },
     {
+      key: "categories",
+      icon: <MdOutlineCategory width={14} height={14} />,
+      label: <NavLink to="categories">Categories</NavLink>,
+    },
+    {
       key: "earning",
-      icon: <img src={income} alt="income" width={16} height={16} />,
+      icon: <img src={income} alt="earning" width={16} height={16} />,
       label: <NavLink to="earning">Earning</NavLink>,
     },
     // {
@@ -183,7 +189,7 @@ const DashboardLayout = () => {
               alt="logo"
               width={150}
               height={150}
-              className="my-7 mx-auto"
+              className="mx-auto my-7"
             />
           </Link>
 
@@ -220,7 +226,7 @@ const DashboardLayout = () => {
             <Topbar collapsed={collapsed} setCollapsed={setCollapsed} />
           </Header>
           <Content>
-            <div className="bg-white px-2 xl:px-5 py-4 xl:py-5">
+            <div className="px-2 py-4 bg-white xl:px-5 xl:py-5">
               <Outlet />
             </div>
           </Content>

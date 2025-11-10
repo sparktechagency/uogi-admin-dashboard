@@ -31,6 +31,8 @@ import PolicyScreen from "../Dashboard/PolicyScreen/PolicyScreen";
 import Earning from "../Dashboard/Earning/Earning";
 import BusinessDetails from "../Dashboard/Business/BusinessDetails";
 import ProtectedRoute from "../../utils/ProtectedRoute";
+import Categories from "../Dashboard/Categories/Categories";
+import CategoryDetails from "../Dashboard/Categories/CategoryDetails";
 
 //
 
@@ -90,6 +92,14 @@ const router = createBrowserRouter([
           {
             path: "services/:id",
             element: <ServiceDetails />,
+          },
+          {
+            path: "categories",
+            element: <Categories />,
+          },
+          {
+            path: "category/:id",
+            element: <CategoryDetails />,
           },
           {
             path: "earning",

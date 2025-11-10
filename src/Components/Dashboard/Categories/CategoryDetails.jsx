@@ -1,0 +1,376 @@
+import { useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  Button,
+  ConfigProvider,
+  Modal,
+  Input,
+  Popconfirm,
+} from "antd";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { getImageUrl } from "../../../utils/baseUrl";
+import {
+  useEditCategoryMutation,
+  useDeleteCategoryMutation,
+  useGetSubcategoriesQuery,
+  useAddSubcategoryMutation,
+  useDeleteSubcategoryMutation,
+} from "../../../Redux/api/categoryApi";
+import ManageCategoryModal from "../../UI/ManageCategoryModal";
+import { toast } from "sonner";
+
+const CategoryDetails = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { id: categoryId } = useParams();
+  const category = location?.state || {};
+  const imageUrl = getImageUrl();
+
+  // API hooks
+  const [editCategory, { isLoading: isEditing }] = useEditCategoryMutation();
+  const [deleteCategory, { isLoading: isDeleting }] =
+    useDeleteCategoryMutation();
+  const { data: subcategoriesData, isLoading: isLoadingSubcategories } =
+    useGetSubcategoriesQuery(category.name);
+  const [addSubcategory, { isLoading: isAddingSubcategory }] =
+    useAddSubcategoryMutation();
+  const [deleteSubcategory] = useDeleteSubcategoryMutation();
+
+  const subcategories = subcategoriesData?.data || [];
+
+  // Edit Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // Add Subcategory Modal States
+  const [isSubcategoryModalOpen, setIsSubcategoryModalOpen] = useState(false);
+  const [subcategoryName, setSubcategoryName] = useState("");
+
+  // Edit Modal Handlers
+  // const showEditModal = () => {
+  //   setIsEditModalOpen(true);
+  // };
+
+  const handleEditCancel = () => {
+    setIsEditModalOpen(false);
+  };
+
+  const handleEditSubmit = async (formData) => {
+    try {
+      await editCategory({
+        id: categoryId || category?._id,
+        data: formData,
+      }).unwrap();
+
+      toast.success("Category updated successfully!");
+      handleEditCancel();
+      // Update local state if needed
+      if (location.state) {
+        location.state.name = formData.get("categoryName");
+        location.state.categoryName = formData.get("categoryName");
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to update category");
+      console.error(error);
+    }
+  };
+
+  // Delete Handler
+  const handleDelete = async () => {
+    try {
+      await deleteCategory(categoryId || category?._id).unwrap();
+      toast.success("Category deleted successfully!");
+      navigate("/categories");
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to delete category");
+      console.error(error);
+    }
+  };
+
+  // Subcategory Modal Handlers
+  const showSubcategoryModal = () => {
+    setIsSubcategoryModalOpen(true);
+  };
+
+  const handleSubcategoryCancel = () => {
+    setIsSubcategoryModalOpen(false);
+    setSubcategoryName("");
+  };
+
+  const handleSubcategorySubmit = async () => {
+    if (!subcategoryName.trim()) {
+      toast.error("Please enter a subcategory name");
+      return;
+    }
+
+    try {
+      await addSubcategory({
+        categoryId: categoryId,
+        categoryName: category.name,
+        subCategoryname: subcategoryName,
+      }).unwrap();
+
+      toast.success("Subcategory added successfully!");
+      handleSubcategoryCancel();
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to add subcategory");
+      console.error(error);
+    }
+  };
+
+  const handleDeleteSubcategory = async (subcategoryId) => {
+    try {
+      await deleteSubcategory({
+        categoryId: categoryId || category?._id,
+        subcategoryId,
+      }).unwrap();
+
+      toast.success("Subcategory deleted successfully!");
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to delete subcategory");
+      console.error(error);
+    }
+  };
+
+  return (
+    <div className="min-h-[90vh] mx-auto p-8">
+      {/* Header Section */}
+      <div className="flex flex-col items-start justify-between gap-4 mb-6 sm:flex-row sm:items-center">
+        <h2 className="text-3xl font-semibold text-secondary-color">
+          Category Details
+        </h2>
+        <div className="flex gap-3">
+          {/* <ConfigProvider
+            theme={{
+              components: {
+                Button: {
+                  defaultBg: "rgb(254,51,114)",
+                  defaultColor: "rgb(255,255,255)",
+                  defaultHoverBg: "rgb(188,33,82)",
+                  defaultHoverColor: "rgb(255,255,255)",
+                },
+              },
+            }}
+          >
+            <Button
+              icon={<EditOutlined />}
+              onClick={showEditModal}
+              size="large"
+              className="px-6"
+            >
+              Edit Category
+            </Button>
+          </ConfigProvider> */}
+          <ConfigProvider
+            theme={{
+              components: {
+                Button: {
+                  colorPrimary: "#ff4d4f",
+                  defaultBg: "#ff4d4f",
+                  defaultColor: "rgb(255,255,255)",
+                  defaultHoverBg: "#d9363e",
+                  defaultHoverColor: "rgb(255,255,255)",
+                },
+              },
+            }}
+          >
+            <Popconfirm
+              title="Delete Category"
+              description="Are you sure you want to delete this category?"
+              onConfirm={handleDelete}
+              placement="bottomLeft"
+              okText="Yes"
+              cancelText="No"
+              okButtonProps={{ danger: true }}
+            >
+              <Button
+                icon={<DeleteOutlined />}
+                size="large"
+                className="px-6"
+                loading={isDeleting}
+              >
+                Delete
+              </Button>
+            </Popconfirm>
+          </ConfigProvider>
+        </div>
+      </div>
+
+      <div className="w-full sm:w-[80%] lg:w-[70%] xl:w-[60%]">
+        {/* Image Section */}
+        <div className="mb-6">
+          <img
+            src={`${imageUrl}/${category?.image || category?.serviceImage}`}
+            alt={category?.name || category?.categoryName}
+            className="h-[350px] w-full rounded-lg object-cover"
+          />
+        </div>
+
+        {/* Service Info Section */}
+        <div className="mb-8">
+          <h3 className="mb-4 text-3xl font-semibold">
+            {category?.name || category?.categoryName}
+          </h3>
+        </div>
+
+        {/* Subcategories Section */}
+        <div className="bg-[#FEF2F5] rounded-lg p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-2xl font-semibold">Subcategories</h4>
+            <ConfigProvider
+              theme={{
+                components: {
+                  Button: {
+                    defaultBg: "rgb(254,51,114)",
+                    defaultColor: "rgb(255,255,255)",
+                    defaultHoverBg: "rgb(188,33,82)",
+                    defaultHoverColor: "rgb(255,255,255)",
+                  },
+                },
+              }}
+            >
+              <Button
+                icon={<PlusOutlined />}
+                onClick={showSubcategoryModal}
+                size="large"
+                className="px-6"
+              >
+                Add Subcategory
+              </Button>
+            </ConfigProvider>
+          </div>
+
+          {isLoadingSubcategories ? (
+            <div className="py-8 text-center text-gray-500">
+              Loading subcategories...
+            </div>
+          ) : subcategories.length > 0 ? (
+            <div className="grid grid-cols-2 gap-2 space-x-2">
+              {subcategories.map((item) => (
+                <div
+                  key={item._id || item.id}
+                  className="flex items-center justify-between px-4 py-3 bg-white rounded-md"
+                >
+                  <div className="text-lg font-medium">
+                    {item.subCategoryname}
+                  </div>
+                  <Popconfirm
+                    title="Delete Subcategory"
+                    description="Are you sure you want to delete this subcategory?"
+                    onConfirm={() =>
+                      handleDeleteSubcategory(item._id || item.id)
+                    }
+                    okText="Yes"
+                    cancelText="No"
+                    okButtonProps={{ danger: true }}
+                  >
+                    <Button type="text" danger icon={<DeleteOutlined />}>
+                      Delete
+                    </Button>
+                  </Popconfirm>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-gray-500">
+              No subcategories yet. Click &quot;Add Subcategory&quot; to create
+              one.
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Edit Category Modal */}
+      <ManageCategoryModal
+        isOpen={isEditModalOpen}
+        onClose={handleEditCancel}
+        onSubmit={handleEditSubmit}
+        isLoading={isEditing}
+        initialData={category}
+        title="Edit Category"
+        submitText="Update Category"
+        imageFieldName="image"
+      />
+
+      {/* Add Subcategory Modal */}
+      <ConfigProvider
+        theme={{
+          components: {
+            Modal: {
+              contentBg: "#FEF2F5",
+              headerBg: "#FEF2F5",
+            },
+            Input: {
+              activeBorderColor: "rgb(254,51,114)",
+              hoverBorderColor: "rgb(254,51,114)",
+            },
+          },
+        }}
+      >
+        <Modal
+          title={
+            <span className="text-2xl font-bold text-secondary-color">
+              Add Subcategory
+            </span>
+          }
+          open={isSubcategoryModalOpen}
+          onCancel={handleSubcategoryCancel}
+          footer={[
+            <ConfigProvider
+              key="footer-config"
+              theme={{
+                components: {
+                  Button: {
+                    defaultBg: "#FFFFFF",
+                    defaultColor: "rgb(254,51,114)",
+                    defaultBorderColor: "rgb(254,51,114)",
+                    defaultHoverBg: "#FEF2F5",
+                    defaultHoverColor: "rgb(254,51,114)",
+                  },
+                },
+              }}
+            >
+              <Button key="back" onClick={handleSubcategoryCancel}>
+                Cancel
+              </Button>
+            </ConfigProvider>,
+            <ConfigProvider
+              key="submit-config"
+              theme={{
+                components: {
+                  Button: {
+                    defaultBg: "rgb(254,51,114)",
+                    defaultColor: "rgb(255,255,255)",
+                    defaultHoverBg: "rgb(188,33,82)",
+                    defaultHoverColor: "rgb(255,255,255)",
+                  },
+                },
+              }}
+            >
+              <Button
+                key="submit"
+                onClick={handleSubcategorySubmit}
+                loading={isAddingSubcategory}
+              >
+                Add Subcategory
+              </Button>
+            </ConfigProvider>,
+          ]}
+        >
+          <div className="py-4">
+            <label className="block mb-2 text-lg font-medium">
+              Subcategory Name
+            </label>
+            <Input
+              placeholder="Enter subcategory name"
+              value={subcategoryName}
+              onChange={(e) => setSubcategoryName(e.target.value)}
+              size="large"
+            />
+          </div>
+        </Modal>
+      </ConfigProvider>
+    </div>
+  );
+};
+
+export default CategoryDetails;
