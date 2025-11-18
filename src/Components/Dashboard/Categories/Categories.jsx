@@ -14,6 +14,7 @@ const Categories = () => {
     data: allCategories,
     isLoading: isFetching,
     error: fetchError,
+    refetch,
   } = useAllCategoryQuery();
   const categoriesData = allCategories?.data;
   console.log("categoriesData", categoriesData);
@@ -89,7 +90,6 @@ const Categories = () => {
               <Link
                 key={category?._id || index}
                 to={`/category/${category?._id}`}
-                state={category}
                 className="hover:text-base-color"
               >
                 <div className="flex flex-col gap-2 bg-[#FEF2F5] border border-[#FEF2F5] px-4 py-3 rounded-md">
@@ -113,6 +113,7 @@ const Categories = () => {
       </div>
 
       <ManageCategoryModal
+        refetch={refetch}
         isOpen={isModalOpen}
         onClose={handleCancel}
         onSubmit={handleSubmit}

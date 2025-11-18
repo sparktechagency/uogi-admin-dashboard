@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button, ConfigProvider, Modal, Input, Popconfirm } from "antd";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { getImageUrl } from "../../../utils/baseUrl";
 import {
   useEditCategoryMutation,
@@ -9,23 +9,45 @@ import {
   useGetSubcategoriesQuery,
   useAddSubcategoryMutation,
   useDeleteSubcategoryMutation,
+  useAllCategoryQuery,
 } from "../../../Redux/api/categoryApi";
 import ManageCategoryModal from "../../UI/ManageCategoryModal";
 import { toast } from "sonner";
 
 const CategoryDetails = () => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const [categoryData, setCategoryData] = useState(null);
   const { id: categoryId } = useParams();
-  const category = location?.state || {};
+  console.log(categoryId);
+
+  const {
+    data: allCategories,
+    isLoading: isFetching,
+    error: fetchError,
+    refetch,
+  } = useAllCategoryQuery();
+  const categoriesData = allCategories?.data;
+  console.log("categoriesData", categoriesData);
   const imageUrl = getImageUrl();
+
+  useEffect(() => {
+    if (categoriesData && categoryId) {
+      const foundCategory = categoriesData.find(
+        (cat) => cat._id === categoryId
+      );
+      console.log("found category", foundCategory);
+      if (foundCategory) {
+        setCategoryData(foundCategory);
+      }
+    }
+  }, [categoriesData, categoryId]);
 
   // API hooks
   const [editCategory, { isLoading: isEditing }] = useEditCategoryMutation();
   const [deleteCategory, { isLoading: isDeleting }] =
     useDeleteCategoryMutation();
   const { data: subcategoriesData, isLoading: isLoadingSubcategories } =
-    useGetSubcategoriesQuery(category.name);
+    useGetSubcategoriesQuery(categoryData?.name);
   const [addSubcategory, { isLoading: isAddingSubcategory }] =
     useAddSubcategoryMutation();
   const [deleteSubcategory] = useDeleteSubcategoryMutation();
@@ -40,9 +62,9 @@ const CategoryDetails = () => {
   const [subcategoryName, setSubcategoryName] = useState("");
 
   // Edit Modal Handlers
-  // const showEditModal = () => {
-  //   setIsEditModalOpen(true);
-  // };
+  const showEditModal = () => {
+    setIsEditModalOpen(true);
+  };
 
   const handleEditCancel = () => {
     setIsEditModalOpen(false);
@@ -50,18 +72,15 @@ const CategoryDetails = () => {
 
   const handleEditSubmit = async (formData) => {
     try {
-      await editCategory({
-        id: categoryId || category?._id,
+      const response = await editCategory({
+        id: categoryId || categoryData?._id,
         data: formData,
       }).unwrap();
+      console.log(response);
+      refetch();
 
       toast.success("Category updated successfully!");
       handleEditCancel();
-      // Update local state if needed
-      if (location.state) {
-        location.state.name = formData.get("categoryName");
-        location.state.categoryName = formData.get("categoryName");
-      }
     } catch (error) {
       toast.error(error?.data?.message || "Failed to update category");
       console.error(error);
@@ -71,7 +90,7 @@ const CategoryDetails = () => {
   // Delete Handler
   const handleDelete = async () => {
     try {
-      await deleteCategory(categoryId || category?._id).unwrap();
+      await deleteCategory(categoryId || categoryData?._id).unwrap();
       toast.success("Category deleted successfully!");
       navigate("/categories");
     } catch (error) {
@@ -99,7 +118,7 @@ const CategoryDetails = () => {
     try {
       await addSubcategory({
         categoryId: categoryId,
-        categoryName: category.name,
+        categoryName: categoryData.name,
         subCategoryname: subcategoryName,
       }).unwrap();
 
@@ -114,7 +133,7 @@ const CategoryDetails = () => {
   const handleDeleteSubcategory = async (subcategoryId) => {
     try {
       await deleteSubcategory({
-        categoryId: categoryId || category?._id,
+        categoryId: categoryId || categoryData?._id,
         subcategoryId,
       }).unwrap();
 
@@ -125,6 +144,13 @@ const CategoryDetails = () => {
     }
   };
 
+  if (isFetching || !categoryData) {
+    return <div>Loading...</div>;
+  }
+  if (fetchError) {
+    return <div>Error: {fetchError.message}</div>;
+  }
+
   return (
     <div className="min-h-[90vh] mx-auto p-8">
       {/* Header Section */}
@@ -133,7 +159,7 @@ const CategoryDetails = () => {
           Category Details
         </h2>
         <div className="flex gap-3">
-          {/* <ConfigProvider
+          <ConfigProvider
             theme={{
               components: {
                 Button: {
@@ -153,7 +179,7 @@ const CategoryDetails = () => {
             >
               Edit Category
             </Button>
-          </ConfigProvider> */}
+          </ConfigProvider>
           <ConfigProvider
             theme={{
               components: {
@@ -193,8 +219,10 @@ const CategoryDetails = () => {
         {/* Image Section */}
         <div className="mb-6">
           <img
-            src={`${imageUrl}/${category?.image || category?.serviceImage}`}
-            alt={category?.name || category?.categoryName}
+            src={`${imageUrl}/${
+              categoryData?.image || categoryData?.serviceImage
+            }`}
+            alt={categoryData?.name || categoryData?.categoryName}
             className="h-[350px] w-full rounded-lg object-contain"
           />
         </div>
@@ -202,7 +230,7 @@ const CategoryDetails = () => {
         {/* Service Info Section */}
         <div className="mb-8">
           <h3 className="mb-4 text-3xl font-semibold">
-            {category?.name || category?.categoryName}
+            {categoryData?.name || categoryData?.categoryName}
           </h3>
         </div>
 
@@ -279,7 +307,7 @@ const CategoryDetails = () => {
         onClose={handleEditCancel}
         onSubmit={handleEditSubmit}
         isLoading={isEditing}
-        initialData={category}
+        initialData={categoryData}
         title="Edit Category"
         submitText="Update Category"
         imageFieldName="image"

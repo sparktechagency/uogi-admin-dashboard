@@ -39,6 +39,7 @@ const categoryApi = baseApi.injectEndpoints({
     // Edit category
     editCategory: builder.mutation({
       query: ({ id, data }) => {
+        console.log(id, data);
         const accessToken = localStorage.getItem("accessToken");
         return {
           url: `/category/${id}`,

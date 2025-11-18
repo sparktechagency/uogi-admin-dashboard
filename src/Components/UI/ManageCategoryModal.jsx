@@ -12,6 +12,7 @@ const ManageCategoryModal = ({
   initialData = null,
   title = "Add Category",
   submitText = "Add Category",
+  refetch,
 }) => {
   const [categoryName, setCategoryName] = useState("");
   const [categoryImage, setCategoryImage] = useState(null);
