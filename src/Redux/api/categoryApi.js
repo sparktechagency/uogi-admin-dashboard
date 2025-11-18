@@ -104,12 +104,19 @@ const categoryApi = baseApi.injectEndpoints({
 
     // Edit subcategory
     editSubcategory: builder.mutation({
-      query: (subcategoryId, data) => ({
-        url: `/subcategory/${subcategoryId}`,
-        method: "PUT",
-        body: data,
-      }),
-      invalidatesTags: ["subcategory"],
+      query: ({ subcategoryId, data }) => {
+        console.log("edit sub", subcategoryId);
+        const accessToken = localStorage.getItem("accessToken");
+        return {
+          url: `/sub-category/${subcategoryId}`,
+          method: "patch",
+          body: data,
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      invalidatesTags: ["category"],
     }),
 
     // Delete subcategory
