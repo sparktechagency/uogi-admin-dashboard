@@ -70,8 +70,8 @@ const categoryApi = baseApi.injectEndpoints({
 
     // Get all subcategories for a category
     getSubcategories: builder.query({
-      query: (categoryName) => ({
-        url: `/sub-category?categoryName=${categoryName}&page=1&limit=50`,
+      query: (categoryId) => ({
+        url: `/sub-category?categoryId=${categoryId}&page=1&limit=50`,
         method: "GET",
       }),
       providesTags: ["subcategory"],

@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import { Button, ConfigProvider, Modal, Input, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { toast } from "sonner";
+import { getImageUrl } from "../../utils/baseUrl";
 
 const ManageCategoryModal = ({
   isOpen,
   onClose,
   onSubmit,
   isLoading,
-  initialData = null,
+  initialData,
   title = "Add Category",
   submitText = "Add Category",
   refetch,
@@ -18,20 +19,30 @@ const ManageCategoryModal = ({
   const [categoryImage, setCategoryImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
+  const imageUrl = getImageUrl();
+
   // Reset form when modal opens/closes or initialData changes
   useEffect(() => {
     if (isOpen) {
       if (initialData) {
         setCategoryName(initialData.name || initialData.categoryName || "");
-        setImagePreview(null);
-        setCategoryImage(null);
+        setImagePreview(
+          initialData?.image ? `${imageUrl}/${initialData?.image}` : null
+        );
+        setCategoryImage(null); // Only reset image if adding new category
       } else {
         setCategoryName("");
-        setImagePreview(null);
+        // Load image from localStorage if available
+        const storedImage = localStorage.getItem("categoryImage");
+        if (storedImage) {
+          setImagePreview(storedImage);
+        } else {
+          setImagePreview(null);
+        }
         setCategoryImage(null);
       }
     }
-  }, [isOpen, initialData]);
+  }, [isOpen, initialData, imageUrl]);
 
   const handleImageChange = (info) => {
     const file = info.file.originFileObj || info.file;
@@ -39,7 +50,11 @@ const ManageCategoryModal = ({
       setCategoryImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
+        const previewUrl = reader.result;
+        console.log(previewUrl);
+        setImagePreview(previewUrl);
+        // Store the preview URL in localStorage
+        localStorage.setItem("categoryImage", previewUrl);
       };
       reader.readAsDataURL(file);
     }
@@ -63,15 +78,27 @@ const ManageCategoryModal = ({
       formData.append("image", categoryImage);
     }
 
-    await onSubmit(formData);
+    try {
+      await onSubmit(formData);
+      toast.success("Category updated successfully!");
+    } catch (error) {
+      toast.error(error?.message || "Failed to update category");
+      console.error(error);
+    }
   };
 
   const handleCancel = () => {
     setCategoryName("");
     setCategoryImage(null);
     setImagePreview(null);
+    // Clear the stored image preview when the modal is closed
+    localStorage.removeItem("categoryImage");
     onClose();
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <ConfigProvider

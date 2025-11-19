@@ -51,7 +51,7 @@ const CategoryDetails = () => {
     data: subcategoriesData,
     isLoading: isLoadingSubcategories,
     refetch: refetchSubcategories,
-  } = useGetSubcategoriesQuery(categoryData?.name);
+  } = useGetSubcategoriesQuery(categoryId);
 
   const [addSubcategory, { isLoading: isAddingSubcategory }] =
     useAddSubcategoryMutation();
@@ -192,7 +192,12 @@ const CategoryDetails = () => {
     }
   };
 
-  if (isFetching || !categoryData || isEditingSubcategory) {
+  if (
+    isFetching ||
+    !categoryData ||
+    isEditingSubcategory ||
+    isLoadingSubcategories
+  ) {
     return <div>Loading...</div>;
   }
   if (fetchError) {
@@ -267,9 +272,7 @@ const CategoryDetails = () => {
         {/* Image Section */}
         <div className="mb-6">
           <img
-            src={`${imageUrl}/${
-              categoryData?.image || categoryData?.serviceImage
-            }`}
+            src={`${imageUrl}/${categoryData?.image}`}
             alt={categoryData?.name || categoryData?.categoryName}
             className="h-[350px] w-full rounded-lg object-contain"
           />
