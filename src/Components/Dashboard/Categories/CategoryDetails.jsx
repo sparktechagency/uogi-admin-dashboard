@@ -317,13 +317,13 @@ const CategoryDetails = () => {
               Loading subcategories...
             </div>
           ) : subcategories.length > 0 ? (
-            <div className="grid grid-cols-2 gap-2 space-x-2">
+            <div className="grid grid-cols-2 gap-2">
               {subcategories.map((item) => (
                 <div
                   key={item._id || item.id}
-                  className="flex items-center justify-between px-4 py-3 bg-white rounded-md"
+                  className="grid grid-cols-3 px-4 py-3 bg-white rounded-md"
                 >
-                  <div className="text-lg font-medium">
+                  <div className="text-lg font-medium col-span-2 ">
                     {item.subCategoryname}
                   </div>
 
